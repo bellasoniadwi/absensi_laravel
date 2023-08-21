@@ -20,26 +20,37 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
-        'password',
+        'nim',
+        'angkatan',
+        'localId',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    public function getAuthIdentifierName() {
+        return 'localId';
+     }
+     public function getAuthIdentifier(){
+        return $this->localId;
+     }
+     public function getAuthIdentifierEmail() {
+        return 'localId';
+     }
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        'email_verified_at' => 'datetime',
-        'password' => 'hashed',
-    ];
+    // /**
+    //  * The attributes that should be hidden for serialization.
+    //  *
+    //  * @var array<int, string>
+    //  */
+    // protected $hidden = [
+    //     'password',
+    //     'remember_token',
+    // ];
+
+    // /**
+    //  * The attributes that should be cast.
+    //  *
+    //  * @var array<string, string>
+    //  */
+    // protected $casts = [
+    //     'email_verified_at' => 'datetime',
+    // ];
 }
