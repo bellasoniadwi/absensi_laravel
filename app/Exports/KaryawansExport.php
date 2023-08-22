@@ -6,7 +6,7 @@ use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Google\Cloud\Firestore\FirestoreClient;
 
-class StudentsExport implements FromCollection, WithHeadings
+class KaryawansExport implements FromCollection, WithHeadings
 {
     public function collection()
     {
@@ -43,7 +43,7 @@ class StudentsExport implements FromCollection, WithHeadings
             'projectId' => 'absensi-sinarindo',
         ]);
 
-        $collectionReference = $firestore->collection('students');
+        $collectionReference = $firestore->collection('karyawans');
         $userData = [];
 
         // Retrieve users data

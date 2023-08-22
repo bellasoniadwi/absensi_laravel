@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class IsNotSiswa
+class IsNotKaryawan
 {
     public function handle(Request $request, Closure $next)
     {
@@ -21,7 +21,7 @@ class IsNotSiswa
             $userSnapshot = $userDocRef->snapshot();
             $userData = $userSnapshot->data();
 
-            if ($userSnapshot->exists() && isset($userData['role']) && $userData['role'] === "Siswa") {
+            if ($userSnapshot->exists() && isset($userData['role']) && $userData['role'] === "Karyawan") {
                 return redirect()->route('notauthorize');
             }
         }

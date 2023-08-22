@@ -167,7 +167,7 @@ class UserController extends Controller
                     'name' => $request->input('name'),
                     'nomor_induk' => $request->input('nomor_induk'),
                     'angkatan' => $request->input('angkatan'),
-                    'role' => 'Siswa',
+                    'role' => 'Karyawan',
                     'didaftarkan_oleh' => $name,
                     'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
                 ];
@@ -181,7 +181,7 @@ class UserController extends Controller
                     'email' => $request->input('email'),
                     'nomor_induk' => $request->input('nomor_induk'),
                     'angkatan' => $request->input('angkatan'),
-                    'role' => 'Siswa',
+                    'role' => 'Karyawan',
                     'didaftarkan_oleh' => $name,
                     'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
                 ]);

@@ -11,17 +11,17 @@
           <div class="col-xl-8 col-lg-8 col-md-8 mx-auto">
             <div class="card card-plain">
                 <h4 class="font-weight-bolder text-center">
-                    Form Tambah Data Siswa
+                    Form Tambah Data karyawan
                 </h4>
                 <div class="card-body">
-                    <form id="studentForm" role="form" method="POST" action="{{ route('siswa.create') }}" enctype="multipart/form-data">
+                    <form id="studentForm" role="form" method="POST" action="{{ route('karyawan.create') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="input-group input-group-outline mb-3">
                             <label class="form-label"></label>
                             <select class="form-control has-feedback-right" id="name" name="name" value="{{ old('name') }}">
-                                <option value=""> --Pilih Siswa--</option>
-                                @foreach ($list_siswa as $siswa)
-                                    <option value="{{ $siswa['name'] }}" {{ old('name') == $siswa['name'] ? 'selected' : '' }}>{{ $siswa['name'] }}</option>
+                                <option value=""> --Pilih karyawan--</option>
+                                @foreach ($list_karyawan as $karyawan)
+                                    <option value="{{ $karyawan['name'] }}" {{ old('name') == $karyawan['name'] ? 'selected' : '' }}>{{ $karyawan['name'] }}</option>
                                 @endforeach
                             </select>
                         </div>

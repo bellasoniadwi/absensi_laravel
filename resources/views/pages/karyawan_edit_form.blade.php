@@ -4,24 +4,24 @@
     Edit Data
 @endsection
 
-@section('students', 'active bg-gradient-info')
+@section('karyawans', 'active bg-gradient-info')
 
 @section('content')
         <div class="row justofy-content-center">
           <div class="col-xl-8 col-lg-8 col-md-8 mx-auto">
             <div class="card card-plain">
                 <h4 class="font-weight-bolder text-center">
-                    Form Edit Data Siswa
+                    Form Edit Data karyawan
                 </h4>
                 <div class="card-body">
-                    <form id="studentForm" role="form" method="POST" action="{{ route('siswa.update', $documentId) }}" enctype="multipart/form-data">
+                    <form id="studentForm" role="form" method="POST" action="{{ route('karyawan.update', $documentId) }}" enctype="multipart/form-data">
                         @csrf
                         <div class="input-group input-group-outline mb-3">
                             <label class="form-label"></label>
                             <select class="form-control has-feedback-right" id="name" name="name" value="{{ old('name') }}">
-                                @foreach ($list_siswa as $list)
+                                @foreach ($list_karyawan as $list)
                                 <option value="{{ $list['name'] }}"
-                                    @if ($list['name'] == $siswa->get('name')) selected
+                                    @if ($list['name'] == $karyawan->get('name')) selected
                                     @endif>{{$list['name']}}
                                   </option>
                                 @endforeach
@@ -31,9 +31,9 @@
                             <label class="form-label"></label>
                             <select class="form-control has-feedback-right" id="keterangan" name="keterangan" value="{{ old('keterangan') }}">
                                 {{-- <option value=""> --Pilih Keterangan--</option> --}}
-                                <option value="Masuk" @if ($siswa->get('keterangan') == "Masuk")selected @endif>Masuk</option>
-                                <option value="Izin" @if ($siswa->get('keterangan') == "Izin")selected @endif>Izin</option>
-                                <option value="Sakit" @if ($siswa->get('keterangan') == "Sakit")selected @endif>Sakit</option>
+                                <option value="Masuk" @if ($karyawan->get('keterangan') == "Masuk")selected @endif>Masuk</option>
+                                <option value="Izin" @if ($karyawan->get('keterangan') == "Izin")selected @endif>Izin</option>
+                                <option value="Sakit" @if ($karyawan->get('keterangan') == "Sakit")selected @endif>Sakit</option>
                             </select>
                         </div>
                         <div class="input-group input-group-outline mb-3">
@@ -51,7 +51,7 @@
                             </div>
                             <div class="col-md-1"></div>
                             <div class="col-md-5">
-                                <img id="preview" width="80px" height="100px" src="{{ $siswa['image'] }}" alt="user1">
+                                <img id="preview" width="80px" height="100px" src="{{ $karyawan['image'] }}" alt="user1">
                             </div>
                         </div>
                         <div class="text-center">

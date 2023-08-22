@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Google\Cloud\Firestore\FirestoreClient;
 use Maatwebsite\Excel\Facades\Excel;
 use Kreait\Firebase\Contract\Firestore;
-use App\Exports\StudentsExport;
+use App\Exports\KaryawansExport;
 use DateTime;
 use Google\Cloud\Core\Timestamp;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ use Kreait\Firebase\Exception\FirebaseException;
 use Kreait\Laravel\Firebase\Facades\Firebase;
 use RealRashid\SweetAlert\Facades\Alert;
 
-class StudentController extends Controller
+class KaryawanController extends Controller
 {
     public function index()
     {
@@ -46,17 +46,9 @@ class StudentController extends Controller
             'projectId' => 'absensi-sinarindo',
         ]);
 
-        $collectionReference = $firestore->collection('students');
+        $collectionReference = $firestore->collection('karyawans');
         $data = [];
-
-        if ($role_akun == 'Superadmin') {
-            $query = $collectionReference->orderBy('name');
-        } elseif ($role_akun == 'Instruktur') {
-            $query = $collectionReference->where('instruktur', '=', $nama_akun)->orderBy('name', 'asc');
-        } else {
-            $query = $collectionReference->orderBy('name');
-        }
-
+        $query = $collectionReference->orderBy('name');
         $documents = $query->documents();
 
             foreach ($documents as $doc) {
@@ -65,6 +57,7 @@ class StudentController extends Controller
                 $documentId = $doc->id();
 
                 $name = $documentData['name'] ?? null;
+                $keterangan = $documentData['keterangan'] ?? null;
                 $timestamps = $documentData['timestamps'] ?? null;
                 $image = $documentData['image'] ?? null;
                 $latitude = $documentData['latitude'] ?? null;
@@ -73,6 +66,7 @@ class StudentController extends Controller
 
                 $data[] = [
                     'name' => $name,
+                    'keterangan' => $keterangan,
                     'timestamps' => $timestamps,
                     'image' => $image,
                     'latitude' => $latitude,
@@ -82,7 +76,7 @@ class StudentController extends Controller
                 ];
 
             }
-        return view('pages.students', compact('data'));
+        return view('pages.karyawans', compact('data'));
     }
 
     public function create_form() {
@@ -106,16 +100,16 @@ class StudentController extends Controller
             $nama_akun = "Name ga kebaca";
         }
 
-        $siswaCollection = app('firebase.firestore')->database()->collection('users')->where('didaftarkan_oleh', '=', $nama_akun);
+        $karyawanCollection = app('firebase.firestore')->database()->collection('users');
     
         // Mengambil dokumen dari collection dan mengubahnya menjadi array
-        $siswaDocuments = $siswaCollection->documents();
-        $list_siswa = [];
-        foreach ($siswaDocuments as $document) {
-            $list_siswa[] = $document->data();
+        $karyawanDocuments = $karyawanCollection->documents();
+        $list_karyawan = [];
+        foreach ($karyawanDocuments as $document) {
+            $list_karyawan[] = $document->data();
         }
     
-        return view('pages.student_form', ['list_siswa' => $list_siswa]);
+        return view('pages.karyawan_form', ['list_karyawan' => $list_karyawan]);
     }
 
     public function edit_form($documentId) {
@@ -139,21 +133,21 @@ class StudentController extends Controller
             $nama_akun = "Name ga kebaca";
         }
 
-        $siswaCollection = app('firebase.firestore')->database()->collection('users')->where('didaftarkan_oleh', '=', $nama_akun);
+        $karyawanCollection = app('firebase.firestore')->database()->collection('users');
     
         // Mengambil dokumen dari collection dan mengubahnya menjadi array
-        $siswaDocuments = $siswaCollection->documents();
-        $list_siswa = [];
-        foreach ($siswaDocuments as $document) {
-            $list_siswa[] = $document->data();
+        $karyawanDocuments = $karyawanCollection->documents();
+        $list_karyawan = [];
+        foreach ($karyawanDocuments as $document) {
+            $list_karyawan[] = $document->data();
         }
 
         try {
-            $siswa = app('firebase.firestore')->database()->collection('students')->document($documentId)->snapshot();
+            $karyawan = app('firebase.firestore')->database()->collection('karyawans')->document($documentId)->snapshot();
 
-            return view('pages.student_edit_form', compact('siswa', 'documentId', 'list_siswa'));
+            return view('pages.karyawan_edit_form', compact('karyawan', 'documentId', 'list_karyawan'));
         } catch (FirebaseException $e) {
-            return response()->json(['message' => 'Gagal mengambil data student: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Gagal mengambil data karyawan: ' . $e->getMessage()], 500);
         }
     }
 
@@ -208,21 +202,20 @@ class StudentController extends Controller
             }
     
             $firestore = app(Firestore::class);
-            $studentRef = $firestore->database()->collection('students');
+            $karyawanRef = $firestore->database()->collection('karyawans');
             $tanggal = new Timestamp(new DateTime());
 
-            $studentRef->add([
+            $karyawanRef->add([
                 'name' => $request->input('name'),
                 'keterangan' => $request->input('keterangan'),
-                'instruktur' => $name,
                 'timestamps' => $tanggal,
                 'latitude' => $request->input('latitude'),
                 'longitude' => $request->input('longitude'),
                 'image' => $imagePath,
             ]);
             
-            Alert::success('Data absensi siswa berhasil ditambahkan');
-            return redirect()->route('siswa');
+            Alert::success('Data absensi karyawan berhasil ditambahkan');
+            return redirect()->route('karyawan');
         } catch (FirebaseException $e) {
             Session::flash('error', $e->getMessage());
             return back()->withInput();
@@ -250,15 +243,15 @@ class StudentController extends Controller
                 $imagePath = $storage->getBucket()->object($storagePath)->signedUrl(now()->addYears(10));
             } else {
                 $firestore = app(Firestore::class);
-                $studentRef = $firestore->database()->collection('students')->document($documentId)->snapshot();
-                $imagePath = $studentRef->get('image');
+                $karyawanRef = $firestore->database()->collection('karyawans')->document($documentId)->snapshot();
+                $imagePath = $karyawanRef->get('image');
             }
         
                 $firestore = app(Firestore::class);
-                $studentRef = $firestore->database()->collection('students')->document($documentId);
+                $karyawanRef = $firestore->database()->collection('karyawans')->document($documentId);
                 $tanggal = new Timestamp(new DateTime());
 
-                $studentRef->update([
+                $karyawanRef->update([
                     ['path' => 'name', 'value' => $request->input('name')],
                     ['path' => 'keterangan', 'value' => $request->input('keterangan')],
                     ['path' => 'timestamps', 'value' => $tanggal],
@@ -267,8 +260,8 @@ class StudentController extends Controller
                     ['path' => 'image', 'value' => $imagePath],
                 ]);
 
-                Alert::success('Data absensi siswa berhasil diubah');
-                return redirect()->route('siswa');
+                Alert::success('Data absensi karyawan berhasil diubah');
+                return redirect()->route('karyawan');
         } catch (FirebaseException $e) {
             Session::flash('error', $e->getMessage());
             return back()->withInput();
@@ -278,17 +271,17 @@ class StudentController extends Controller
     public function delete($documentId)
     {
         try {
-            app('firebase.firestore')->database()->collection('students')->document($documentId)->delete();
-            Alert::success('Data absensi siswa berhasil dihapus');
-            return redirect()->route('siswa');
+            app('firebase.firestore')->database()->collection('karyawans')->document($documentId)->delete();
+            Alert::success('Data absensi karyawan berhasil dihapus');
+            return redirect()->route('karyawan');
         } catch (FirebaseException $e) {
-            return response()->json(['message' => 'Gagal menghapus data student: ' . $e->getMessage()], 500);
+            return response()->json(['message' => 'Gagal menghapus data karyawan: ' . $e->getMessage()], 500);
         }
     }
     
-    //export excel untuk data bukti kehadiran siswa
+    //export excel untuk data bukti kehadiran karyawan
     public function exportExcel()
     {
-        return Excel::download(new StudentsExport(), 'bukti_kehadiran.xlsx');
+        return Excel::download(new KaryawansExport(), 'bukti_kehadiran.xlsx');
     }
 }

@@ -15,7 +15,7 @@
                         Form Daftar Akun Instruktur
                     @endcan
                     @can('instruktur')
-                        Form Daftar Akun Siswa
+                        Form Daftar Akun Karyawan
                     @endcan
                 </h4>
                 {{-- <p class="mb-0">Enter your email and password to register</p> --}}
@@ -87,7 +87,7 @@
                                 <option value="Instruktur"></option>
                                 @endcan
                                 @can('instruktur')
-                                <option value="Siswa">Siswa</option>
+                                <option value="Karyawan">Karyawan</option>
                                 @endcan
                             </select>
                         </div> --}}

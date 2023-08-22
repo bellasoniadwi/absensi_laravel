@@ -148,7 +148,7 @@ class HomeController extends Controller
         // Menghitung jumlah total tanpa keterangan
         $totalWithoutKeterangan = $activeDaysInMonth - ($totalMasuk + $totalIzin + $totalSakit);
 
-        //Start function untuk menampilkan Akun Siswa Tercatat di dashboard
+        //Start function untuk menampilkan Akun Karyawan Tercatat di dashboard
         $collectionReferenceUser = $firestore->collection('users');
         $userDocuments = $collectionReferenceUser->documents();
         if ($role_akun == 'Superadmin') {
@@ -189,10 +189,10 @@ class HomeController extends Controller
 
     }
 
-    //export Rekap jumlah siswa serta keterangannya pada dashboard
+    //export Rekap jumlah akun serta keterangannya pada dashboard
     public function exportExcel()
     {
-        return Excel::download(new RekapExport(), 'rekap_siswa.xlsx');
+        return Excel::download(new RekapExport(), 'rekap_karyawan.xlsx');
     }
 
     //export Rekap Kehadiran pada dashboard
