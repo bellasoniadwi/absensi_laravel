@@ -16,7 +16,7 @@ class AuthServiceProvider extends ServiceProvider {
          return new FirebaseUserProvider($app['hash'], $config['model']);
       });
 
-      Gate::define('superadmin', function ($user) {
+      Gate::define('admin', function ($user) {
          $id = $user->localId;
  
          $firestore = app('firebase.firestore');
@@ -26,7 +26,7 @@ class AuthServiceProvider extends ServiceProvider {
  
          $userData = $userSnapshot->data();
  
-         return $userSnapshot->exists() && isset($userData['role']) && $userData['role'] === "Superadmin";
+         return $userSnapshot->exists() && isset($userData['role']) && $userData['role'] === "Admin";
      });
    }
 }

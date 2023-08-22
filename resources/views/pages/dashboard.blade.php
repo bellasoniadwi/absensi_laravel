@@ -25,7 +25,7 @@
       <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
         <a href="{{ route('export.kehadiran') }}" class="btn btn-success">Export Excel</a>
       </div>
-      <!-- end rekap students data from firestore -->
+      <!-- end rekap karyawans data from firestore -->
     </div>
     <br>
     <div class="row">
@@ -38,12 +38,12 @@
                 </div>
                 <div class="text-end pt-1">
                     <p class="text-sm mb-0 text-capitalize">Jumlah Pengguna</p>
-                    <h4 class="mb-0">{{ $totalStudentInAMonth }}</h4>
+                    <h4 class="mb-0">{{ $totalKaryawanInAMonth }}</h4>
                 </div>
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-                <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalStudentInAMonth }}</span> akun pengguna</p>
+                <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalKaryawanInAMonth }}</span> akun pengguna</p>
             </div>
         </div>
     </div>
@@ -61,7 +61,7 @@
                 </div>
                 <hr class="dark horizontal my-0">
                 <div class="card-footer p-3">
-                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalMasuk }}</span> karyawan bulan ini</p>
+                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalMasuk }}</span> karyawan</p>
                 </div>
             </div>
             <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
@@ -84,7 +84,7 @@
                 </div>
                 <hr class="dark horizontal my-0">
                 <div class="card-footer p-3">
-                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalIzin }}</span> karyawan bulan ini</p>
+                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalIzin }}</span> karyawan</p>
                 </div>
             </div>
             <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
@@ -107,7 +107,7 @@
                 </div>
                 <hr class="dark horizontal my-0">
                 <div class="card-footer p-3">
-                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalSakit }}</span> karyawan bulan ini</p>
+                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalSakit }}</span> karyawan</p>
                 </div>
             </div>
             <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
@@ -123,7 +123,7 @@
       <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
         <a href="{{ route('export.rekap') }}" class="btn btn-success">Export Excel</a>
       </div>
-      <!-- end rekap students data from firestore -->
+      <!-- end rekap Karyawans data from firestore -->
         <div class="col-12">
           <div class="card my-4">
             <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">

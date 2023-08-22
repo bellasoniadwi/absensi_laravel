@@ -40,7 +40,7 @@ class HomeController extends Controller
         $firestore = new FirestoreClient([
             'projectId' => 'absensi-sinarindo',
         ]);
-        $collectionReference = $firestore->collection('students');
+        $collectionReference = $firestore->collection('karyawans');
 
         $query = $collectionReference->orderBy('name');
         $documents = $query->documents();
@@ -124,7 +124,7 @@ class HomeController extends Controller
         $totalMasuk = 0;
         $totalIzin = 0;
         $totalSakit = 0;
-        $totalStudentInAMonth = 0;
+        $totalKaryawanInAMonth = 0;
 
         // menghitung totalMasuk, totalIzin, dan totalSakit dari value field "nama" yang sama
         foreach ($totals as $nameTotal) {
@@ -147,9 +147,9 @@ class HomeController extends Controller
         $queryUser = $collectionReferenceUser->orderBy('name', 'asc');
         $documentsUser = $queryUser->documents();
 
-        //menghitung students yang tercatatat pada firestore collections users
+        //menghitung Karyawans yang tercatatat pada firestore collections users
         foreach ($documentsUser as $docUser) {
-            $totalStudentInAMonth++;
+            $totalKaryawanInAMonth++;
 
             $documentDataUser = $docUser->data();
             $name = $documentDataUser['name'] ?? null;
@@ -158,7 +158,7 @@ class HomeController extends Controller
                 'name' => $name
             ];
         }
-        $totalStudents = count($dataUser);
+        $totalKaryawans = count($dataUser);
 
         // Menentukan predikat berdasarkan totalMasuk
         $predikat = '';
@@ -172,7 +172,7 @@ class HomeController extends Controller
             $predikat = 'D';
         }
 
-        return view('pages.dashboard', compact('totals', 'totalMasuk', 'totalIzin', 'totalSakit', 'totalStudents', 'totalStudentInAMonth', 'currentMonthYearNow', 'totalWithoutKeteranganPerName', 'predikat'));
+        return view('pages.dashboard', compact('totals', 'totalMasuk', 'totalIzin', 'totalSakit', 'totalKaryawans', 'totalKaryawanInAMonth', 'currentMonthYearNow', 'totalWithoutKeteranganPerName', 'predikat'));
 
     }
 

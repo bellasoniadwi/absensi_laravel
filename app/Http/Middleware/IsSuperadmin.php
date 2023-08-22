@@ -7,7 +7,7 @@ use Google\Cloud\Firestore\FirestoreClient;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class IsSuperadmin
+class IsAdmin
 {
     /**
      * Handle an incoming request.
@@ -31,7 +31,7 @@ class IsSuperadmin
             // Mengakses data dari snapshot menggunakan metode data()
             $userData = $userSnapshot->data();
 
-            if ($userSnapshot->exists() && isset($userData['role']) && $userData['role'] === "Superadmin") {
+            if ($userSnapshot->exists() && isset($userData['role']) && $userData['role'] === "Admin") {
                 return $next($request);
             }
         }

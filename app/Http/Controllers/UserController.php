@@ -125,7 +125,7 @@ class UserController extends Controller
 
             $this->validator($request->all())->validate();
 
-                       if ($role_akun == 'Superadmin') {
+                       if ($role_akun == 'Admin') {
                 $userProperties = [
                     'email' => $request->input('email'),
                     'password' => $request->input('password'),

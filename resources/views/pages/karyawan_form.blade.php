@@ -4,7 +4,7 @@
     Tambah Data
 @endsection
 
-@section('students', 'active bg-gradient-info')
+@section('karyawans', 'active bg-gradient-info')
 
 @section('content')
         <div class="row justofy-content-center">
@@ -14,7 +14,7 @@
                     Form Tambah Data karyawan
                 </h4>
                 <div class="card-body">
-                    <form id="studentForm" role="form" method="POST" action="{{ route('karyawan.create') }}" enctype="multipart/form-data">
+                    <form id="karyawanForm" role="form" method="POST" action="{{ route('karyawan.create') }}" enctype="multipart/form-data">
                         @csrf
                         <div class="input-group input-group-outline mb-3">
                             <label class="form-label"></label>
@@ -72,7 +72,7 @@
                                 }
                                 
                                 // Tambahkan event listener untuk form saat form dikirimkan
-                                document.getElementById('studentForm').addEventListener('submit', function(event) {
+                                document.getElementById('karyawanForm').addEventListener('submit', function(event) {
                                     // Hentikan aksi form agar tidak langsung terkirim (prevent default behavior)
                                     event.preventDefault();
                             
@@ -94,7 +94,7 @@
                                             longitudeInput.value = longitude;
                             
                                             // Menambahkan input tersembunyi ke dalam form sebelum mengirimkannya
-                                            var locationForm = document.getElementById('studentForm');
+                                            var locationForm = document.getElementById('karyawanForm');
                                             locationForm.appendChild(latitudeInput);
                                             locationForm.appendChild(longitudeInput);
                             

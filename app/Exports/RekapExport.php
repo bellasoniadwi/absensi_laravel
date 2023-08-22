@@ -35,7 +35,7 @@ class RekapExport implements FromCollection, WithHeadings
         $firestore = new FirestoreClient([
             'projectId' => 'absensi-sinarindo',
         ]);
-        $collectionReference = $firestore->collection('students');
+        $collectionReference = $firestore->collection('karyawans');
         $query = $collectionReference->orderBy('name');
         $documents = $query->documents();
 

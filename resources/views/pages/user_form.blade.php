@@ -11,7 +11,7 @@
           <div class="col-xl-8 col-lg-8 col-md-8 mx-auto">
             <div class="card card-plain">
                 <h4 class="font-weight-bolder text-center">
-                    @can('superadmin')
+                    @can('admin')
                         Form Daftar Akun Karyawan
                     @endcan
                 </h4>
