@@ -160,19 +160,7 @@ class HomeController extends Controller
         }
         $totalKaryawans = count($dataUser);
 
-        // Menentukan predikat berdasarkan totalMasuk
-        $predikat = '';
-        if ($totalMasuk >= 18 && $totalMasuk <= 24) {
-            $predikat = 'A';
-        } elseif ($totalMasuk >= 15 && $totalMasuk <= 17) {
-            $predikat = 'B';
-        } elseif ($totalMasuk >= 12 && $totalMasuk <= 14) {
-            $predikat = 'C';
-        } else {
-            $predikat = 'D';
-        }
-
-        return view('pages.dashboard', compact('totals', 'totalMasuk', 'totalIzin', 'totalSakit', 'totalKaryawans', 'totalKaryawanInAMonth', 'currentMonthYearNow', 'totalWithoutKeteranganPerName', 'predikat'));
+        return view('pages.dashboard', compact('totals', 'totalMasuk', 'totalIzin', 'totalSakit', 'totalKaryawans', 'totalKaryawanInAMonth', 'currentMonthYearNow', 'totalWithoutKeteranganPerName'));
 
     }
 

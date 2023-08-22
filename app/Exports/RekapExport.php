@@ -96,17 +96,6 @@ class RekapExport implements FromCollection, WithHeadings
         ];
 
         foreach ($totals as $name => $nameTotal) {
-            // penentuan predikat
-            $totalMasuk = $nameTotal['masuk'];
-            if ($totalMasuk >= 18 && $totalMasuk <= 24) {
-                $predikat = 'A';
-            } elseif ($totalMasuk >= 15 && $totalMasuk <= 17) {
-                $predikat = 'B';
-            } elseif ($totalMasuk >= 12 && $totalMasuk <= 14) {
-                $predikat = 'C';
-            } else {
-                $predikat = 'D';
-            }
 
             // KODE PROGRAM UNTUK GAJI
             // $userDetails = $userData[$name] ?? null;
@@ -128,10 +117,9 @@ class RekapExport implements FromCollection, WithHeadings
                 'name' => $name,
                 'month' => $indonesianMonth,
                 'year' => date('Y', strtotime($timestamps)),
-                'total_masuk' => $totalMasuk,
+                'total_masuk' => $nameTotal['masuk'],
                 'total_izin' => $nameTotal['izin'],
                 'total_sakit' => $nameTotal['sakit'],
-                'predikat' => $predikat
             ];
         }
 
@@ -140,6 +128,6 @@ class RekapExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return ['Name', 'Bulan', 'Tahun', 'Jumlah Masuk', 'Jumlah Izin', 'Jumlah Sakit', 'Predikat'];
+        return ['Name', 'Bulan', 'Tahun', 'Jumlah Masuk', 'Jumlah Izin', 'Jumlah Sakit'];
     }
 }
