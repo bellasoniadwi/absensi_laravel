@@ -38,7 +38,7 @@
             @include('sweetalert::alert')
         </div>
     </main>
-    @include('newlayout.settings')
+    {{-- @include('newlayout.settings') --}}
     <!--   Core JS Files   -->
     <script src="{{ asset('assets/js/core/popper.min.js')}}"></script>
     <script src="{{ asset('assets/js/core/bootstrap.min.js')}}"></script>
