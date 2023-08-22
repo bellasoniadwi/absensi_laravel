@@ -40,6 +40,7 @@ class HomeController extends Controller
         $firestore = new FirestoreClient([
             'projectId' => 'absensi-sinarindo',
         ]);
+        
         $collectionReference = $firestore->collection('karyawans');
 
         $query = $collectionReference->orderBy('name');
@@ -51,6 +52,9 @@ class HomeController extends Controller
         $totalKeteranganPerName = [];
         $totalWithoutKeteranganPerName = [];
 
+        
+
+
         // ambil data di bulan dan tahun ini
         $currentMonthYear = date('Y-m', strtotime('now'));
         foreach ($documents as $doc) {
@@ -58,6 +62,7 @@ class HomeController extends Controller
             $keterangan = $documentData['keterangan'] ?? null;
             $timestamps = $documentData['timestamps'] ?? null;
             $name = $documentData['name'] ?? null;
+
             $recordedMonthYear = date('Y-m', strtotime($timestamps));
             if ($recordedMonthYear === $currentMonthYear) {
                 if (!isset($totals[$name])) {
@@ -159,6 +164,34 @@ class HomeController extends Controller
             ];
         }
         $totalKaryawans = count($dataUser);
+
+
+        // Ambil data absensi hanya untuk hari ini
+        $currentDate = date('Y-m-d');
+        $documents = $query->documents();
+
+        // Inisialisasi nilai awal
+        $totalMasuk = 0;
+        $totalIzin = 0;
+        $totalSakit = 0;
+
+        // Menghitung totalMasuk, totalIzin, dan totalSakit dari value field "nama" yang sama
+        foreach ($documents as $doc) {
+            $documentData = $doc->data();
+            $keterangan = $documentData['keterangan'] ?? null;
+            $timestamps = $documentData['timestamps'] ?? null;
+
+            // Filter hanya data hari ini
+            if (date('Y-m-d', strtotime($timestamps)) === $currentDate) {
+                if ($keterangan === "Masuk") {
+                    $totalMasuk++;
+                } elseif ($keterangan === "Izin") {
+                    $totalIzin++;
+                } elseif ($keterangan === "Sakit") {
+                    $totalSakit++;
+                }
+            }
+        }
 
         return view('pages.dashboard', compact('totals', 'totalMasuk', 'totalIzin', 'totalSakit', 'totalKaryawans', 'totalKaryawanInAMonth', 'currentMonthYearNow', 'totalWithoutKeteranganPerName'));
 
