@@ -61,7 +61,7 @@
                 </div>
                 <hr class="dark horizontal my-0">
                 <div class="card-footer p-3">
-                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalMasuk }}</span> karyawan</p>
+                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalMasuk }}</span> karyawan hari ini</p>
                 </div>
             </div>
             <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
@@ -84,7 +84,7 @@
                 </div>
                 <hr class="dark horizontal my-0">
                 <div class="card-footer p-3">
-                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalIzin }}</span> karyawan</p>
+                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalIzin }}</span> karyawan hari ini</p>
                 </div>
             </div>
             <div class="col-xl-4 col-sm-6 mb-xl-0 mb-4">
@@ -107,7 +107,7 @@
                 </div>
                 <hr class="dark horizontal my-0">
                 <div class="card-footer p-3">
-                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalSakit }}</span> karyawan</p>
+                    <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalSakit }}</span> karyawan hari ini</p>
                 </div>
             </div>
             <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
