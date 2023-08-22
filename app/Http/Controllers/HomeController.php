@@ -42,14 +42,7 @@ class HomeController extends Controller
         ]);
         $collectionReference = $firestore->collection('students');
 
-        // set data yang ditampilkan per role/nama
-        if ($role_akun == 'Superadmin') {
-            $query = $collectionReference->orderBy('name');
-        } elseif ($role_akun == 'Instruktur') {
-            $query = $collectionReference->where('instruktur', '=', $nama_akun)->orderBy('name', 'asc');
-        } else {
-            $query = $collectionReference->orderBy('name');
-        }
+        $query = $collectionReference->orderBy('name');
         $documents = $query->documents();
 
         // Inisialisasi array
@@ -151,13 +144,7 @@ class HomeController extends Controller
         //Start function untuk menampilkan Akun Karyawan Tercatat di dashboard
         $collectionReferenceUser = $firestore->collection('users');
         $userDocuments = $collectionReferenceUser->documents();
-        if ($role_akun == 'Superadmin') {
-            $queryUser = $collectionReferenceUser->where('didaftarkan_oleh', '=','Developer' )->orderBy('name', 'asc');
-        } elseif ($role_akun == 'Instruktur') {
-            $queryUser = $collectionReferenceUser->where('didaftarkan_oleh', '=', $nama_akun)->orderBy('name', 'asc');
-        } else {
-            $queryUser = $collectionReferenceUser->orderBy('name');
-        }
+        $queryUser = $collectionReferenceUser->orderBy('name', 'asc');
         $documentsUser = $queryUser->documents();
 
         //menghitung students yang tercatatat pada firestore collections users

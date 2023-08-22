@@ -67,7 +67,6 @@ class Kernel extends HttpKernel
 
         'notkaryawan' => \App\Http\Middleware\IsNotKaryawan::class,
         'superadmin' => \App\Http\Middleware\IsSuperadmin::class,
-        'instruktur' => \App\Http\Middleware\IsInstruktur::class,
         
     ];
 }

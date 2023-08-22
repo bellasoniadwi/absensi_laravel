@@ -46,15 +46,7 @@ class UserController extends Controller
 
         $collectionReference = $firestore->collection('users');
         $data = [];
-
-        if ($role_akun == 'Superadmin') {
-            $query = $collectionReference->where('role', '=', 'Instruktur')->orderBy('name');
-        } elseif ($role_akun == 'Instruktur') {
-            $query = $collectionReference->where('didaftarkan_oleh', '=', $nama_akun)->orderBy('name', 'asc');
-        } else {
-            $query = $collectionReference->orderBy('name');
-        }
-
+        $query = $collectionReference->orderBy('name');
         $documents = $query->documents();
 
         foreach ($documents as $doc) {
@@ -65,18 +57,18 @@ class UserController extends Controller
             $name = $documentData['name'] ?? null;
             $email = $documentData['email'] ?? null;
             $nomor_induk = $documentData['nomor_induk'] ?? null;
-            $angkatan = $documentData['angkatan'] ?? null;
+            $telepon = $documentData['telepon'] ?? null;
             $role = $documentData['role'] ?? null;
-            $pendaftar = $documentData['didaftarkan_oleh'] ?? null;
+            $jabatan = $documentData['jabatan'] ?? null;
             $image = $documentData['image'] ?? null;
 
             $data[] = [
                 'name' => $name,
                 'email' => $email,
                 'nomor_induk' => $nomor_induk,
-                'angkatan' => $angkatan,
+                'telepon' => $telepon,
                 'role' => $role,
-                'pendaftar' => $pendaftar,
+                'jabatan' => $jabatan,
                 'image' => $image
             ];
         }
@@ -101,7 +93,8 @@ class UserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
             'nomor_induk' => ['string', 'max:12'],
-            'angkatan' => ['string', 'max:4'],
+            'telepon' => ['required', 'numeric'],
+            'jabatan' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
             // 'role' => ['required', 'string', 'max:255'],
             // 'image' => ['mimes:png,jpg,jpeg', 'max:2048']
@@ -138,9 +131,9 @@ class UserController extends Controller
                     'password' => $request->input('password'),
                     'name' => $request->input('name'),
                     'nomor_induk' => $request->input('nomor_induk'),
-                    'angkatan' => $request->input('angkatan'),
-                    'role' => 'Instruktur',
-                    'didaftarkan_oleh' => $name,
+                    'telepon' => $request->input('telepon'),
+                    'jabatan' => $request->input('jabatan'),
+                    'role' => 'Karyawan',
                     'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
                 ];
       
@@ -149,47 +142,18 @@ class UserController extends Controller
                 $firestore = app(Firestore::class);
                 $userRef = $firestore->database()->collection('users')->document($createdUser->uid);
                 $userRef->set([
+                    'nomor_induk' => $request->input('nomor_induk'),
                     'name' => $request->input('name'),
                     'email' => $request->input('email'),
-                    'nomor_induk' => $request->input('nomor_induk'),
-                    'angkatan' => $request->input('angkatan'),
-                    'role' => 'Instruktur',
-                    'didaftarkan_oleh' => $name,
+                    'telepon' => $request->input('telepon'),
+                    'jabatan' => $request->input('jabatan'),
+                    'role' => 'Karyawan',
                     'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
                 ]);
     
                 Alert::success('Akun baru berhasil ditambahkan');
                 return redirect()->route('user.index');
-            } elseif($role_akun == 'Instruktur'){
-                $userProperties = [
-                    'email' => $request->input('email'),
-                    'password' => $request->input('password'),
-                    'name' => $request->input('name'),
-                    'nomor_induk' => $request->input('nomor_induk'),
-                    'angkatan' => $request->input('angkatan'),
-                    'role' => 'Karyawan',
-                    'didaftarkan_oleh' => $name,
-                    'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
-                ];
-      
-                $createdUser = $this->auth->createUser($userProperties);
-    
-                $firestore = app(Firestore::class);
-                $userRef = $firestore->database()->collection('users')->document($createdUser->uid);
-                $userRef->set([
-                    'name' => $request->input('name'),
-                    'email' => $request->input('email'),
-                    'nomor_induk' => $request->input('nomor_induk'),
-                    'angkatan' => $request->input('angkatan'),
-                    'role' => 'Karyawan',
-                    'didaftarkan_oleh' => $name,
-                    'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
-                ]);
-    
-                Alert::success('Akun baru berhasil ditambahkan');
-                return redirect()->route('user.index');
-            }
-            
+            } 
         } catch (FirebaseException $e) {
             Session::flash('error', $e->getMessage());
             return back()->withInput();

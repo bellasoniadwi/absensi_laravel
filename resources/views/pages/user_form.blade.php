@@ -12,9 +12,6 @@
             <div class="card card-plain">
                 <h4 class="font-weight-bolder text-center">
                     @can('superadmin')
-                        Form Daftar Akun Instruktur
-                    @endcan
-                    @can('instruktur')
                         Form Daftar Akun Karyawan
                     @endcan
                 </h4>
@@ -56,19 +53,28 @@
                                 </span>
                             @enderror
                         </div>
-                        @can('instruktur')
                         <div class="input-group input-group-outline mb-3">
-                            <label class="form-label {{ old('angkatan') ? 'active' : '' }}">Angkatan</label>
-                            <input type="number" id="angkatan" name="angkatan"
-                                class="form-control @error('angkatan') is-invalid @enderror" value="{{ old('angkatan') }}"
-                                required autocomplete="angkatan">
-                            @error('angkatan')
+                            <label class="form-label {{ old('telepon') ? 'active' : '' }}">Telepon</label>
+                            <input type="number" id="telepon" name="telepon"
+                                class="form-control @error('telepon') is-invalid @enderror" value="{{ old('telepon') }}"
+                                required autocomplete="telepon">
+                            @error('telepon')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>
                             @enderror
                         </div>
-                        @endcan
+                        <div class="input-group input-group-outline mb-3">
+                            <label class="form-label {{ old('jabatan') ? 'active' : '' }}">Jabatan</label>
+                            <input type="text" id="jabatan" name="jabatan"
+                                class="form-control @error('jabatan') is-invalid @enderror" value="{{ old('jabatan') }}"
+                                required autocomplete="jabatan">
+                            @error('jabatan')
+                                <span class="invalid-feedback" role="alert">
+                                    <strong>{{ $message }}</strong>
+                                </span>
+                            @enderror
+                        </div>
                         <div class="input-group input-group-outline mb-3">
                             <label class="form-label {{ old('password') ? 'active' : '' }}">Password</label>
                             <input type="password" id="password" name="password"
@@ -80,32 +86,6 @@
                                 </span>
                             @enderror
                         </div>
-                        {{-- <div class="input-group input-group-outline mb-3">
-                            <label class="form-label"></label>
-                            <select class="form-control has-feedback-right" id="role" name="role" value="{{ old('role') }}">
-                                @can('superadmin')
-                                <option value="Instruktur"></option>
-                                @endcan
-                                @can('instruktur')
-                                <option value="Karyawan">Karyawan</option>
-                                @endcan
-                            </select>
-                        </div> --}}
-                        {{-- <div class="input-group input-group-outline mb-3">
-                            <div class="col-md-8">
-                                <label class="form-label"></label>
-                                <input type="file" id="image" name="image" class="form-control @error('image') is-invalid @enderror" value="{{ old('image') }}" autocomplete="image" onchange="previewImage(event)">
-                                @error('image')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                                @enderror
-                            </div>
-                            <div class="col-md-1"></div>
-                            <div class="col-md-3">
-                                <img id="preview" src="#" alt="Preview Gambar" style="max-width: 80px; max-height: 100px; display: none;">
-                            </div>
-                        </div> --}}
                         <div class="text-center">
                             <button type="submit"
                                 class="btn btn-lg bg-gradient-info btn-lg w-100 mt-4 mb-0">Simpan</button>

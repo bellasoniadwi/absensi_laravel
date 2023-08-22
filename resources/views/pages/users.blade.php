@@ -27,10 +27,9 @@
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Email</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nomor Induk</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Telepon</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jabatan</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Role</th>
-                  @can('superadmin')
-                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Yang Mendaftarkan</th>
-                  @endcan
                   {{-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th> --}}
                 </tr>
               </thead>
@@ -50,13 +49,14 @@
                     <p class="text-xs font-weight-bold mb-0">{{ $user['nomor_induk'] }}</p>
                   </td>
                   <td class="align-middle text-center">
+                    <p class="text-xs font-weight-bold mb-0">{{ $user['telepon'] }}</p>
+                  </td>
+                  <td class="align-middle text-center">
+                    <p class="text-xs font-weight-bold mb-0">{{ $user['jabatan'] }}</p>
+                  </td>
+                  <td class="align-middle text-center">
                     <p class="text-xs font-weight-bold mb-0">{{ $user['role'] }}</p>
                   </td>
-                  @can('superadmin')
-                  <td class="align-middle text-center">
-                    <p class="text-xs font-weight-bold mb-0">{{ $user['pendaftar'] }}</p>
-                  </td>
-                  @endcan
                   {{-- <td>
                       <a class="btn btn-link text-danger px-3 mb-0" href="javascript:;"><i class="material-icons text-sm me-2">delete</i>Delete</a>
                       <a class="btn btn-link text-dark px-3 mb-0" href="javascript:;"><i class="material-icons text-sm me-2">edit</i>Edit</a>

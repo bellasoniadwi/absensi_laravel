@@ -38,15 +38,7 @@ class KehadiranExport implements FromCollection, WithHeadings
         ]);
 
         $collectionReference = $firestore->collection('karyawans');
-
-        if ($role_akun == 'Superadmin') {
-            $query = $collectionReference->orderBy('name');
-        } elseif ($role_akun == 'Instruktur') {
-            $query = $collectionReference->where('instruktur', '=', $nama_akun);
-        } else {
-            $query = $collectionReference->orderBy('name');
-        }
-
+        $query = $collectionReference->orderBy('name');
         $documents = $query->documents();
 
         $totals = [];
