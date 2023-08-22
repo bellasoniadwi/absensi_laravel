@@ -103,6 +103,6 @@ class KehadiranExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return ['Bulan', 'Tahun', 'Jumlah Siswa', 'Jumlah Masuk', 'Jumlah Izin', 'Jumlah Sakit'];
+        return ['Bulan', 'Tahun', 'Jumlah Akun', 'Jumlah Masuk', 'Jumlah Izin', 'Jumlah Sakit'];
     }
 }
