@@ -24,54 +24,42 @@ class KaryawansExport implements FromCollection, WithHeadings
             if ($userSnapshot->exists()) {
                 $nama_akun = $userSnapshot->data()['name'];
                 $role_akun = $userSnapshot->data()['role'];
-                $nomor_induk_akun = $userSnapshot->data()['nomor_induk'];
-                $angkatan_akun = $userSnapshot->data()['angkatan'];
             } else {
                 $nama_akun = "Name not found";
                 $role_akun = "Role not found";
-                $nomor_induk_akun = "Nomor Induk not found";
-                $angkatan_akun = "Angkatan not found";
             }
         } else {
             $nama_akun = "Name ga kebaca";
             $role_akun = "Role ga kebaca";
             $nomor_induk_akun = "Nomor Induk not found";
-            $angkatan_akun = "Angkatan not found";
         }
 
         $firestore = new FirestoreClient([
             'projectId' => 'absensi-sinarindo',
         ]);
 
-        $collectionReference = $firestore->collection('karyawans');
-        $userData = [];
-
         // Retrieve users data
+        $userData = [];
         $usersCollection = $firestore->collection('users')->documents();
         foreach ($usersCollection as $userDoc) {
             $userData[$userDoc->data()['name']] = [
+                'email' => $userDoc->data()['email'],
                 'nomor_induk' => $userDoc->data()['nomor_induk'],
-                'angkatan' => $userDoc->data()['angkatan'],
+                'jabatan' => $userDoc->data()['jabatan'],
+                'telepon' => $userDoc->data()['telepon'],
+                'email' => $userDoc->data()['email'],
             ];
         }
 
-        if ($role_akun == 'Superadmin') {
-            $query = $collectionReference->orderBy('name');
-        } elseif ($role_akun == 'Instruktur') {
-            $query = $collectionReference->where('instruktur', '=', $nama_akun);
-        } else {
-            $query = $collectionReference->orderBy('name');
-        }
-
+        $collectionReference = $firestore->collection('karyawans');
+        $query = $collectionReference->orderBy('name');
         $documents = $query->documents();
-        
         
         foreach ($documents as $doc) {
             $documentData = $doc->data();
             $id = $doc->id();
             $name = $documentData['name'] ?? null;
             $keterangan = $documentData['keterangan'] ?? null;
-            $instruktur = $documentData['instruktur'] ?? null;
             $timestamps = $documentData['timestamps'] ?? null;
 
             $jam_absen = new \DateTime($timestamps);
@@ -86,16 +74,18 @@ class KaryawansExport implements FromCollection, WithHeadings
             $userDetails = $userData[$name] ?? null;
 
             $userNomorInduk = $userDetails['nomor_induk'] ?? '';
-            $userAngkatan = $userDetails['angkatan'] ?? '';
+            $userJabatan = $userDetails['jabatan'] ?? '';
+            $userTelepon = $userDetails['telepon'] ?? '';
+            $userEmail = $userDetails['email'] ?? '';
             
 
             $data[] = [
-                'id' => $id,
-                'name' => $name,
                 'nomor_induk' => $userNomorInduk,
-                'angkatan' => $userAngkatan,
+                'name' => $name,
+                'email' => $userEmail,
+                'telepon' => $userTelepon,
+                'jabatan' => $userJabatan,
                 'keterangan' => $keterangan,
-                'instruktur' => $instruktur,
                 'tanggal' => date('d-M-Y', strtotime($timestamps)),
                 'jam_absen' => $jam_absen->format('H:i:s'),
                 'image' => $image,
@@ -111,6 +101,6 @@ class KaryawansExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return ['ID', 'Nama', 'Nomor Induk', 'Angkatan', 'Keterangan','Instruktur','Tanggal','Jam Absen', 'Image', 'Latitude', 'Longitude' ];
+        return ['Nomor Induk', 'Nama', 'Email', 'Telepon', 'Jabatan', 'Keterangan','Tanggal','Jam Absen', 'Image', 'Latitude', 'Longitude' ];
     }
 }

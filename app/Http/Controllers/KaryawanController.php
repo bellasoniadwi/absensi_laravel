@@ -51,31 +51,28 @@ class KaryawanController extends Controller
         $query = $collectionReference->orderBy('name');
         $documents = $query->documents();
 
-            foreach ($documents as $doc) {
+        foreach ($documents as $doc) {
+            $documentData = $doc->data();
+            $documentId = $doc->id();
+            $name = $documentData['name'] ?? null;
+            $keterangan = $documentData['keterangan'] ?? null;
+            $timestamps = $documentData['timestamps'] ?? null;
+            $image = $documentData['image'] ?? null;
+            $latitude = $documentData['latitude'] ?? null;
+            $longitude = $documentData['longitude'] ?? null;
+            $googleMapsUrl = sprintf('https://www.google.com/maps?q=%f,%f', $latitude, $longitude);
 
-                $documentData = $doc->data();
-                $documentId = $doc->id();
-
-                $name = $documentData['name'] ?? null;
-                $keterangan = $documentData['keterangan'] ?? null;
-                $timestamps = $documentData['timestamps'] ?? null;
-                $image = $documentData['image'] ?? null;
-                $latitude = $documentData['latitude'] ?? null;
-                $longitude = $documentData['longitude'] ?? null;
-                $googleMapsUrl = sprintf('https://www.google.com/maps?q=%f,%f', $latitude, $longitude);
-
-                $data[] = [
-                    'name' => $name,
-                    'keterangan' => $keterangan,
-                    'timestamps' => $timestamps,
-                    'image' => $image,
-                    'latitude' => $latitude,
-                    'longitude' => $longitude,
-                    'googleMapsUrl' => $googleMapsUrl,
-                    'id'=>$documentId
-                ];
-
-            }
+            $data[] = [
+                'name' => $name,
+                'keterangan' => $keterangan,
+                'timestamps' => $timestamps,
+                'image' => $image,
+                'latitude' => $latitude,
+                'longitude' => $longitude,
+                'googleMapsUrl' => $googleMapsUrl,
+                'id'=>$documentId
+            ];
+        }
         return view('pages.karyawans', compact('data'));
     }
 
