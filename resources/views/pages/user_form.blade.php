@@ -15,8 +15,6 @@
                         Form Daftar Akun Karyawan
                     @endcan
                 </h4>
-                {{-- <p class="mb-0">Enter your email and password to register</p> --}}
-                {{-- </div> --}}
                 <div class="card-body">
                     <form role="form" method="POST" action="{{ route('user.create') }}" enctype="multipart/form-data">
                         @csrf
@@ -37,17 +35,6 @@
                                 class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}"
                                 required autocomplete="email">
                             @error('email')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        <div class="input-group input-group-outline mb-3">
-                            <label class="form-label {{ old('nomor_induk') ? 'active' : '' }}">Nomor Induk</label>
-                            <input type="number" id="nomor_induk" name="nomor_induk"
-                                class="form-control @error('nomor_induk') is-invalid @enderror" value="{{ old('nomor_induk') }}"
-                                required autocomplete="nomor_induk">
-                            @error('nomor_induk')
                                 <span class="invalid-feedback" role="alert">
                                     <strong>{{ $message }}</strong>
                                 </span>

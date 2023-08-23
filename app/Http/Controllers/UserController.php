@@ -13,6 +13,7 @@ use Kreait\Laravel\Firebase\Facades\Firebase;
 use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
+use App\Helpers\Helper;
 
 class UserController extends Controller
 {
@@ -94,7 +95,6 @@ class UserController extends Controller
         return Validator::make($data, [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255'],
-            'nomor_induk' => ['string', 'max:12'],
             'telepon' => ['required', 'numeric'],
             'jabatan' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
@@ -132,7 +132,7 @@ class UserController extends Controller
                     'email' => $request->input('email'),
                     'password' => $request->input('password'),
                     'name' => $request->input('name'),
-                    'nomor_induk' => $request->input('nomor_induk'),
+                    'nomor_induk' => Helper::NomorKaryawanGenerator(),
                     'telepon' => $request->input('telepon'),
                     'jabatan' => $request->input('jabatan'),
                     'role' => 'Karyawan',
@@ -144,7 +144,7 @@ class UserController extends Controller
                 $firestore = app(Firestore::class);
                 $userRef = $firestore->database()->collection('users')->document($createdUser->uid);
                 $userRef->set([
-                    'nomor_induk' => $request->input('nomor_induk'),
+                    'nomor_induk' => Helper::NomorKaryawanGenerator(),
                     'name' => $request->input('name'),
                     'email' => $request->input('email'),
                     'telepon' => $request->input('telepon'),

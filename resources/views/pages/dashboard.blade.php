@@ -7,25 +7,7 @@
 @section('dashboard', 'active bg-gradient-info')
 
 @section('content')
-{{-- @if (Route::has('login'))
-<div class="sm:fixed sm:top-0 sm:right-0 p-6 text-right z-10">
-    @auth
-        <a href="{{ url('/') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Home</a>
-    @else
-        <a href="{{ route('login') }}" class="font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Log in</a>
-
-        @if (Route::has('register'))
-            <a href="{{ route('register') }}" class="ml-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline focus:outline-2 focus:rounded-sm focus:outline-red-500">Register</a>
-        @endif
-    @endauth
-</div>
-@endif --}}
     <div class="row">
-      <!-- export rekap data from firestore -->
-      {{-- <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
-        <a href="{{ route('export.kehadiran') }}" class="btn btn-success">Export Excel</a>
-      </div> --}}
-      <!-- end rekap karyawans data from firestore -->
     </div>
     <br>
     <div class="row">
@@ -38,12 +20,12 @@
                 </div>
                 <div class="text-end pt-1">
                     <p class="text-sm mb-0 text-capitalize">Jumlah Pengguna</p>
-                    <h4 class="mb-0">{{ $totalKaryawanInAMonth }}</h4>
+                    <h4 class="mb-0">{{ $totalKaryawans }}</h4>
                 </div>
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-                <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalKaryawanInAMonth }}</span> akun pengguna</p>
+                <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalKaryawans }}</span> akun pengguna</p>
             </div>
         </div>
     </div>

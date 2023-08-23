@@ -52,9 +52,6 @@ class HomeController extends Controller
         $totalKeteranganPerName = [];
         $totalWithoutKeteranganPerName = [];
 
-        
-
-
         // ambil data di bulan dan tahun ini
         $currentMonthYear = date('Y-m', strtotime('now'));
         foreach ($documents as $doc) {
@@ -129,7 +126,6 @@ class HomeController extends Controller
         $totalMasuk = 0;
         $totalIzin = 0;
         $totalSakit = 0;
-        $totalKaryawanInAMonth = 0;
 
         // menghitung totalMasuk, totalIzin, dan totalSakit dari value field "nama" yang sama
         foreach ($totals as $nameTotal) {
@@ -154,8 +150,6 @@ class HomeController extends Controller
 
         //menghitung Karyawans yang tercatatat pada firestore collections users
         foreach ($documentsUser as $docUser) {
-            $totalKaryawanInAMonth++;
-
             $documentDataUser = $docUser->data();
             $name = $documentDataUser['name'] ?? null;
 
@@ -193,7 +187,7 @@ class HomeController extends Controller
             }
         }
 
-        return view('pages.dashboard', compact('totals', 'totalMasuk', 'totalIzin', 'totalSakit', 'totalKaryawans', 'totalKaryawanInAMonth', 'currentMonthYearNow', 'totalWithoutKeteranganPerName'));
+        return view('pages.dashboard', compact('totals', 'totalMasuk', 'totalIzin', 'totalSakit', 'totalKaryawans', 'currentMonthYearNow', 'totalWithoutKeteranganPerName'));
 
     }
 
