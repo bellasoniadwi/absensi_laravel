@@ -27,7 +27,7 @@ Route::get('/password/reset', [ResetController::class, 'index'])->name('index');
 Route::post('/password/reset/store', [ResetController::class, 'store'])->name('store');
 
 Route::group(['middleware' => ['auth', 'notkaryawan']], function () {
-    Route::get('/home', [HomeController::class, 'dashboard'])->name('dashboard');
+    Route::get('/', [HomeController::class, 'dashboard'])->name('dashboard');
 
     // index
     Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan');
