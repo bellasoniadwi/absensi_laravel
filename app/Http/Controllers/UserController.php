@@ -11,6 +11,8 @@ use Kreait\Firebase\Contract\Auth;
 use Kreait\Firebase\Exception\FirebaseException;
 use Kreait\Laravel\Firebase\Facades\Firebase;
 use RealRashid\SweetAlert\Facades\Alert;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\UsersExport;
 
 class UserController extends Controller
 {
@@ -158,5 +160,11 @@ class UserController extends Controller
             Session::flash('error', $e->getMessage());
             return back()->withInput();
         }
+    }
+
+    //export Data Akun Pengguna
+    public function exportExcel()
+    {
+        return Excel::download(new UsersExport(), 'users.xlsx');
     }
 }

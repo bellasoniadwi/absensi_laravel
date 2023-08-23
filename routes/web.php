@@ -47,6 +47,7 @@ Route::group(['middleware' => ['auth', 'notkaryawan']], function () {
     Route::get('/export-karyawan', [KaryawanController::class, 'exportExcel'])->name('export.karyawan');
     Route::get('/export-rekap', [HomeController::class, 'exportExcel'])->name('export.rekap');
     Route::get('/export-kehadiran', [HomeController::class, 'exportExcelKehadiran'])->name('export.kehadiran');
+    Route::get('/export-users', [UserController::class, 'exportExcel'])->name('export.users');
 
     // delete
     Route::delete('/delete-karyawan/{id}', [KaryawanController::class, 'delete'])->name('karyawan.delete');
