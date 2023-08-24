@@ -14,11 +14,11 @@
       </div>
     <!-- end rekap karyawans data from firestore -->
     <!-- start import users -->
-    <form action="{{ route('import.users') }}" method="POST" enctype="multipart/form-data">
+    {{-- <form action="{{ route('import.users') }}" method="POST" enctype="multipart/form-data">
       @csrf
       <input type="file" name="excel_file" accept=".xlsx, .xls">
       <button type="submit">Import Users</button>
-  </form>
+  </form> --}}
   <!-- start import users -->
     <div class="col-12">
       <div class="card my-4">
