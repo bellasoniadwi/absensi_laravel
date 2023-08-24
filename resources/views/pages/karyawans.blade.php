@@ -18,7 +18,7 @@
         
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
           <div class="bg-gradient-info shadow-info border-radius-lg pt-4 pb-3">
-            <h6 class="text-white text-capitalize ps-3">Tabel karyawan</h6>
+            <h6 class="text-white text-capitalize ps-3">Tabel Karyawan</h6>
           </div>
         </div>
         
@@ -35,6 +35,7 @@
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Foto</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Keterangan</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tanggal</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jam Absen</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Lokasi</th>
@@ -53,6 +54,9 @@
                   </td>
                   <td class="align-middle text-center">
                     <p class="text-xs font-weight-bold mb-0">{{ $karyawan['keterangan'] }}</p>
+                  </td>
+                  <td class="align-middle text-center">
+                    <p class="text-xs font-weight-bold mb-0">{{ $karyawan['status'] }}</p>
                   </td>
                   <td class="align-middle text-center">
                     <span class="text-secondary text-xs font-weight-bold">{{ date('Y-m-d', strtotime($karyawan['timestamps'])) }}</span>
