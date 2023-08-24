@@ -9,9 +9,9 @@
 @section('content')
     <div class="row">
       <!-- export rekap data from firestore -->
-      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      {{-- <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
         <a href="{{ route('export.kehadiran') }}" class="btn btn-success">Export Excel</a>
-      </div>
+      </div> --}}
       <!-- end rekap karyawans data from firestore -->
     </div>
     <br>
