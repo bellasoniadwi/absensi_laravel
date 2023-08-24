@@ -10,30 +10,6 @@ class KaryawansExport implements FromCollection, WithHeadings
 {
     public function collection()
     {
-        $user = auth()->user();
-
-        if ($user) {
-            $id = $user->localId;
-
-            $firestore = app('firebase.firestore');
-            $database = $firestore->database();
-
-            $userDocRef = $database->collection('users')->document($id);
-            $userSnapshot = $userDocRef->snapshot();
-
-            if ($userSnapshot->exists()) {
-                $nama_akun = $userSnapshot->data()['name'];
-                $role_akun = $userSnapshot->data()['role'];
-            } else {
-                $nama_akun = "Name not found";
-                $role_akun = "Role not found";
-            }
-        } else {
-            $nama_akun = "Name ga kebaca";
-            $role_akun = "Role ga kebaca";
-            $nomor_induk_akun = "Nomor Induk not found";
-        }
-
         $firestore = new FirestoreClient([
             'projectId' => 'absensi-sinarindo',
         ]);
@@ -60,6 +36,7 @@ class KaryawansExport implements FromCollection, WithHeadings
             $id = $doc->id();
             $name = $documentData['name'] ?? null;
             $keterangan = $documentData['keterangan'] ?? null;
+            $status = $documentData['status'] ?? null;
             $timestamps = $documentData['timestamps'] ?? null;
 
             $jam_absen = new \DateTime($timestamps);
@@ -86,6 +63,7 @@ class KaryawansExport implements FromCollection, WithHeadings
                 'telepon' => $userTelepon,
                 'jabatan' => $userJabatan,
                 'keterangan' => $keterangan,
+                'status' => $status,
                 'tanggal' => date('d-M-Y', strtotime($timestamps)),
                 'jam_absen' => $jam_absen->format('H:i:s'),
                 'image' => $image,
@@ -101,6 +79,6 @@ class KaryawansExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return ['Nomor Induk', 'Nama', 'Email', 'Telepon', 'Jabatan', 'Keterangan','Tanggal','Jam Absen', 'Image', 'Latitude', 'Longitude' ];
+        return ['Nomor Induk', 'Nama', 'Email', 'Telepon', 'Jabatan', 'Keterangan','Status','Tanggal','Jam Absen', 'Image', 'Latitude', 'Longitude' ];
     }
 }
