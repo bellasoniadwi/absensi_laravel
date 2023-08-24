@@ -57,6 +57,7 @@ class RekapExport implements FromCollection, WithHeadings
         foreach ($documents as $doc) {
             $documentData = $doc->data();
             $keterangan = $documentData['keterangan'] ?? null;
+            $status = $documentData['status'] ?? null;
             $timestamps = $documentData['timestamps'] ?? null;
             $name = $documentData['name'] ?? null;
             $recordedMonthYear = date('Y-m', strtotime($timestamps));
@@ -66,6 +67,8 @@ class RekapExport implements FromCollection, WithHeadings
                         'masuk' => 0,
                         'izin' => 0,
                         'sakit' => 0,
+                        'terlambat'=>0,
+                        'tepat_waktu'=>0,
                     ];
                 }
                 // Menghitung total per nama
@@ -75,6 +78,12 @@ class RekapExport implements FromCollection, WithHeadings
                     $totals[$name]['izin']++;
                 } elseif ($keterangan === "Sakit") {
                     $totals[$name]['sakit']++;
+                }
+                
+                if ($status === "Terlambat") {
+                    $totals[$name]['terlambat']++;
+                }elseif ($status === "Tepat Waktu") {
+                    $totals[$name]['tepat_waktu']++;
                 }
             }
         }
@@ -118,6 +127,8 @@ class RekapExport implements FromCollection, WithHeadings
                 'month' => $indonesianMonth,
                 'year' => date('Y', strtotime($timestamps)),
                 'total_masuk' => $nameTotal['masuk'],
+                'terlambat' => $nameTotal['terlambat'],
+                'tepat_waktu' => $nameTotal['tepat_waktu'],
                 'total_izin' => $nameTotal['izin'],
                 'total_sakit' => $nameTotal['sakit'],
             ];
@@ -128,6 +139,6 @@ class RekapExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return ['Name', 'Bulan', 'Tahun', 'Jumlah Masuk', 'Jumlah Izin', 'Jumlah Sakit'];
+        return ['Name', 'Bulan', 'Tahun', 'Jumlah Masuk', 'Jumlah Terlambat','Jumlah Tepat Waktu', 'Jumlah Izin', 'Jumlah Sakit'];
     }
 }

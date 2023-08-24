@@ -16,27 +16,7 @@ class HomeController extends Controller
 
     public function dashboard()
     {
-        // fetch nama, role
-        $user = auth()->user();
-        if ($user) {
-            $id = $user->localId;
-            $firestore = app('firebase.firestore');
-            $database = $firestore->database();
-            
-            $userDocRef = $database->collection('users')->document($id);
-            $userSnapshot = $userDocRef->snapshot();
-
-            if ($userSnapshot->exists()) {
-                $nama_akun = $userSnapshot->data()['name'];
-                $role_akun = $userSnapshot->data()['role'];
-            } else {
-                $nama_akun = "Name not found";
-                $role_akun = "Role not found";
-            }
-        } else {
-            $nama_akun = "Name ga kebaca";
-            $role_akun = "Role ga kebaca";
-        }
+        
         $firestore = new FirestoreClient([
             'projectId' => 'absensi-sinarindo',
         ]);
@@ -57,6 +37,7 @@ class HomeController extends Controller
         foreach ($documents as $doc) {
             $documentData = $doc->data();
             $keterangan = $documentData['keterangan'] ?? null;
+            $status = $documentData['status'] ?? null;
             $timestamps = $documentData['timestamps'] ?? null;
             $name = $documentData['name'] ?? null;
 
@@ -67,6 +48,8 @@ class HomeController extends Controller
                         'masuk' => 0,
                         'izin' => 0,
                         'sakit' => 0,
+                        'terlambat' => 0,
+                        'tepat_waktu' => 0,
                     ];
                 }
                 // Hitung total keterangan "Masuk", "Izin", dan "Sakit" per field "name"
@@ -89,6 +72,15 @@ class HomeController extends Controller
                     }
                     $totalKeteranganPerName[$name]++;
                 }
+
+                if ($status === "Terlambat") {
+                    $totals[$name]['terlambat']++;
+                    
+                } elseif ($status === "Tepat Waktu") {
+                    $totals[$name]['tepat_waktu']++;
+                    
+                }
+
             }
         }
 
@@ -126,13 +118,19 @@ class HomeController extends Controller
         $totalMasuk = 0;
         $totalIzin = 0;
         $totalSakit = 0;
+        $totalTerlambat = 0;
+        $totalTepatWaktu = 0;
 
         // menghitung totalMasuk, totalIzin, dan totalSakit dari value field "nama" yang sama
         foreach ($totals as $nameTotal) {
             $totalMasuk += $nameTotal['masuk'];
             $totalIzin += $nameTotal['izin'];
             $totalSakit += $nameTotal['sakit'];
+            $totalTerlambat += $nameTotal['terlambat'];
+            $totalTepatWaktu += $nameTotal['tepat_waktu'];
         }
+
+            
 
         // Menghitung total tanpa keterangan per nama
         foreach ($totals as $name => $nameTotal) {
@@ -186,7 +184,7 @@ class HomeController extends Controller
             }
         }
 
-        return view('pages.dashboard', compact('totals', 'totalMasuk', 'totalIzin', 'totalSakit', 'totalKaryawans', 'currentMonthYearNow', 'totalWithoutKeteranganPerName'));
+        return view('pages.dashboard', compact('totals', 'totalMasuk', 'totalIzin', 'totalSakit', 'totalTerlambat','totalTepatWaktu','totalKaryawans', 'currentMonthYearNow', 'totalWithoutKeteranganPerName'));
 
     }
 

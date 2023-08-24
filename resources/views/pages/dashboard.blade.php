@@ -125,6 +125,8 @@
                     <tr>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Nama</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jumlah Masuk</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jumlah Terlambat</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jumlah Tepat Waktu</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jumlah Izin</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jumlah Sakit</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tanpa Keterangan</th>
@@ -138,6 +140,12 @@
                       </td>
                       <td class="align-middle text-center">
                         <p class="text-xs font-weight-bold mb-0">{{ $total['masuk'] }}</p>
+                      </td>
+                      <td class="align-middle text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ $total['terlambat'] }}</p>
+                      </td>
+                      <td class="align-middle text-center">
+                        <p class="text-xs font-weight-bold mb-0">{{ $total['tepat_waktu'] }}</p>
                       </td>
                       <td class="align-middle text-center">
                         <p class="text-xs font-weight-bold mb-0">{{ $total['izin'] }}</p>
