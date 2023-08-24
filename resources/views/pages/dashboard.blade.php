@@ -8,14 +8,11 @@
 
 @section('content')
     <div class="row">
-<<<<<<< HEAD
       <!-- export rekap data from firestore -->
       <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
         <a href="{{ route('export.kehadiran') }}" class="btn btn-success">Export Excel</a>
       </div>
       <!-- end rekap karyawans data from firestore -->
-=======
->>>>>>> 64250aef3597868a1a96f470ad6036f145e5d974
     </div>
     <br>
     <div class="row">
