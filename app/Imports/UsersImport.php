@@ -1,72 +1,49 @@
 <?php
+// app/Imports/UsersImport.php
 
 namespace App\Imports;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Validation\Rule;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
-use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\WithHeadingRow;
-use Kreait\Firebase\Contract\Auth;
-use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Illuminate\Support\Facades\Hash;
+use Kreait\Firebase\Firestore;
+use Google\Cloud\Firestore\FirestoreClient;
 
-class UsersImport implements ToCollection, WithHeadingRow
+class UsersImport implements ToCollection
 {
-    protected $auth;
-
-    public function __construct(Auth $auth) {
-       $this->auth = $auth;
-    }
-
     public function collection(Collection $rows)
     {
+        $firestore = new FirestoreClient([
+            'projectId' => 'absensi-sinarindo',
+        ]);
+
+        $usersCollection = $firestore->collection('users');
+        $auth = app('firebase.auth');
+
         foreach ($rows as $row) {
-            $userProperties = [
-                'email' => $row['email'],
-                'password' => Hash::make($row['password']),
-                'name' => $row['name'],
+            $user = [
                 'nomor_induk' => $row['nomor_induk'],
+                'name' => $row['name'],
+                'email' => $row['email'],
+                'password' => $row['password'],
                 'telepon' => $row['telepon'],
                 'jabatan' => $row['jabatan'],
                 'role' => $row['role'],
                 'image' => $row['image'],
             ];
 
-            $createdUser = $this->auth->createUser($userProperties);
+            // Save to Firestore collection
+            $usersCollection->document($user['nomor_induk'])->set($user);
 
-            $firestore = app(Firestore::class);
-            $userRef = $firestore->database()->collection('users')->document($createdUser->uid);
-            $userRef->set([
-                'nomor_induk' => $row['nomor_induk'],
-                'name' => $row['name'],
-                'email' => $row['email'],
-                'telepon' => $row['telepon'],
-                'jabatan' => $row['jabatan'],
-                'role' => $row['role'],
-                'image' => $row['image'],
+            // Create authentication user
+            // Create authentication user
+            $auth->createUser([
+                'email' => $user['email'],
+                'password' => $user['password'],
+                'displayName' => $user['name']
             ]);
         }
-
-        Alert::success('Akun-akun baru berhasil ditambahkan');
+        return collect($user);
     }
 
-    public function startRow(): int
-    {
-        return 2; // Data dimulai dari baris kedua (baris pertama adalah judul kolom)
-    }
-
-    public function rules(): array
-    {
-        return [
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:8',
-            'name' => 'required',
-            'nomor_induk' => 'required',
-            'telepon' => 'required',
-            'jabatan' => 'required',
-        ];
-    }
 }

@@ -52,6 +52,8 @@ Route::group(['middleware' => ['auth', 'notkaryawan']], function () {
     //import
     // Route::get('/import-users', [UserController::class, 'importUsers'])->name('import.users');
     Route::post('/import-users', [UserController::class, 'importUsers'])->name('import.users');
+    // Route::post('/import-users', 'UserController@importUsers')->name('import.users');
+
 
     // delete
     Route::delete('/delete-karyawan/{id}', [KaryawanController::class, 'delete'])->name('karyawan.delete');

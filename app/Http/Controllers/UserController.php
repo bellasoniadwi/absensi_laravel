@@ -107,37 +107,35 @@ class UserController extends Controller
     }
 
     public function create(Request $request) {
-            $this->validator($request->all())->validate();
+        $this->validator($request->all())->validate();
+        $userProperties = [
+            'email' => $request->input('email'),
+            'password' => $request->input('password'),
+            'name' => $request->input('name'),
+            'nomor_induk' => Helper::NomorKaryawanGenerator(),
+            'telepon' => $request->input('telepon'),
+            'jabatan' => $request->input('jabatan'),
+            'role' => 'Karyawan',
+            'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
+        ];
 
-                       
-                $userProperties = [
-                    'email' => $request->input('email'),
-                    'password' => $request->input('password'),
-                    'name' => $request->input('name'),
-                    'nomor_induk' => Helper::NomorKaryawanGenerator(),
-                    'telepon' => $request->input('telepon'),
-                    'jabatan' => $request->input('jabatan'),
-                    'role' => 'Karyawan',
-                    'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
-                ];
-      
-                $createdUser = $this->auth->createUser($userProperties);
-    
-                $firestore = app(Firestore::class);
-                $userRef = $firestore->database()->collection('users')->document($createdUser->uid);
-                $userRef->set([
-                    'nomor_induk' => Helper::NomorKaryawanGenerator(),
-                    'name' => $request->input('name'),
-                    'email' => $request->input('email'),
-                    'telepon' => $request->input('telepon'),
-                    'jabatan' => $request->input('jabatan'),
-                    'role' => 'Karyawan',
-                    'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
-                ]);
-    
-                Alert::success('Akun baru berhasil ditambahkan');
-                return redirect()->route('user.index');
-            } 
+        $createdUser = $this->auth->createUser($userProperties);
+
+        $firestore = app(Firestore::class);
+        $userRef = $firestore->database()->collection('users')->document($createdUser->uid);
+        $userRef->set([
+            'nomor_induk' => Helper::NomorKaryawanGenerator(),
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'telepon' => $request->input('telepon'),
+            'jabatan' => $request->input('jabatan'),
+            'role' => 'Karyawan',
+            'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
+        ]);
+
+        Alert::success('Akun baru berhasil ditambahkan');
+        return redirect()->route('user.index');
+    } 
     
 
     //export Data Akun Pengguna
@@ -147,8 +145,8 @@ class UserController extends Controller
     }
 
     //import Data Akun Pengguna
-    public function importUsers()
+    public function importUsers(Request $request)
     {
-        return Excel::import(new UsersImport(), 'users.xlsx');
+        return Excel::import(new UsersImport, $request->file('excel_file'));
     }
 }
