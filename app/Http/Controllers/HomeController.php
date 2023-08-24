@@ -52,9 +52,6 @@ class HomeController extends Controller
         $totalKeteranganPerName = [];
         $totalWithoutKeteranganPerName = [];
 
-        
-
-
         // ambil data di bulan dan tahun ini
         $currentMonthYear = date('Y-m', strtotime('now'));
         foreach ($documents as $doc) {
@@ -146,13 +143,12 @@ class HomeController extends Controller
         // Menghitung jumlah total tanpa keterangan
         $totalWithoutKeterangan = $activeDaysInMonth - ($totalMasuk + $totalIzin + $totalSakit);
 
-        //Start function untuk menampilkan Akun Karyawan Tercatat di dashboard
+        //Start function untuk menampilkan Akun Pengguna Tercatat di dashboard
         $collectionReferenceUser = $firestore->collection('users');
-        $userDocuments = $collectionReferenceUser->documents();
         $queryUser = $collectionReferenceUser->orderBy('name', 'asc');
         $documentsUser = $queryUser->documents();
 
-        //menghitung Karyawans yang tercatatat pada firestore collections users
+        //menghitung akun pengguna yang tercatatat pada firestore collections users
         foreach ($documentsUser as $docUser) {
             $totalKaryawanInAMonth++;
 

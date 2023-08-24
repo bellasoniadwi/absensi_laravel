@@ -13,6 +13,9 @@ use Kreait\Laravel\Firebase\Facades\Firebase;
 use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
+use App\Imports\UsersImport;
+
+
 
 class UserController extends Controller
 {
@@ -104,30 +107,9 @@ class UserController extends Controller
     }
 
     public function create(Request $request) {
-        try {
-            $user = auth()->user();
-
-            if ($user) {
-                $id = $user->localId;
-                $firestore = app('firebase.firestore');
-                $database = $firestore->database();
-    
-                $userDocRef = $database->collection('users')->document($id);
-                $userSnapshot = $userDocRef->snapshot();
-    
-                if ($userSnapshot->exists()) {
-                    $name = $userSnapshot->data()['name'];
-                    $role_akun = $userSnapshot->data()['role'];
-                } else {
-                    $name = "Tidak Dikenali";
-                }
-            } else {
-                $name = "Tidak Dikenali";
-            }
-
             $this->validator($request->all())->validate();
 
-                       if ($role_akun == 'Admin') {
+                       
                 $userProperties = [
                     'email' => $request->input('email'),
                     'password' => $request->input('password'),
@@ -156,15 +138,17 @@ class UserController extends Controller
                 Alert::success('Akun baru berhasil ditambahkan');
                 return redirect()->route('user.index');
             } 
-        } catch (FirebaseException $e) {
-            Session::flash('error', $e->getMessage());
-            return back()->withInput();
-        }
-    }
+    
 
     //export Data Akun Pengguna
-    public function exportExcel()
+    public function exportUsers()
     {
         return Excel::download(new UsersExport(), 'users.xlsx');
+    }
+
+    //import Data Akun Pengguna
+    public function importUsers()
+    {
+        return Excel::import(new UsersImport(), 'users.xlsx');
     }
 }

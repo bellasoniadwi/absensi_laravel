@@ -8,11 +8,24 @@
 
 @section('content')
 <div class="row">
-    <!-- export rekap data from firestore -->
+    <!-- start export rekap data from firestore -->
       <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
         <a href="{{ route('export.users') }}" class="btn btn-success">Export Excel</a>
       </div>
     <!-- end rekap karyawans data from firestore -->
+    <!-- start import users -->
+    <div class="container">
+      <h1>Import Users</h1>
+      <form action="{{ route('import.users') }}" method="POST" enctype="multipart/form-data">
+          @csrf
+          <div class="form-group">
+              <label for="excel">Choose Excel File:</label>
+              <input type="file" name="excel" id="excel" accept=".xls,.xlsx">
+          </div>
+          <button type="submit" class="btn btn-primary">Import</button>
+      </form>
+    </div>
+  <!-- start import users -->
     <div class="col-12">
       <div class="card my-4">
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">

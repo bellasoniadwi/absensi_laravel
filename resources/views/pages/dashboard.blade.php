@@ -22,9 +22,9 @@
 @endif --}}
     <div class="row">
       <!-- export rekap data from firestore -->
-      {{-- <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+      <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
         <a href="{{ route('export.kehadiran') }}" class="btn btn-success">Export Excel</a>
-      </div> --}}
+      </div>
       <!-- end rekap karyawans data from firestore -->
     </div>
     <br>
@@ -38,12 +38,12 @@
                 </div>
                 <div class="text-end pt-1">
                     <p class="text-sm mb-0 text-capitalize">Jumlah Pengguna</p>
-                    <h4 class="mb-0">{{ $totalKaryawanInAMonth }}</h4>
+                    <h4 class="mb-0">{{ $totalKaryawans }}</h4>
                 </div>
             </div>
             <hr class="dark horizontal my-0">
             <div class="card-footer p-3">
-                <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalKaryawanInAMonth }}</span> akun pengguna</p>
+                <p class="mb-0">Tercatat <span class="text-success text-sm font-weight-bolder">{{ $totalKaryawans }}</span> akun pengguna</p>
             </div>
         </div>
     </div>

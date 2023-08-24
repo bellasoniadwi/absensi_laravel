@@ -8,93 +8,70 @@ use Google\Cloud\Firestore\FirestoreClient;
 
 class KehadiranExport implements FromCollection, WithHeadings
 {
+    
     public function collection()
-    {
-        $user = auth()->user();
-
-        if ($user) {
-            $id = $user->localId;
-
-            $firestore = app('firebase.firestore');
-            $database = $firestore->database();
-
-            $userDocRef = $database->collection('users')->document($id);
-            $userSnapshot = $userDocRef->snapshot();
-
-            if ($userSnapshot->exists()) {
-                $nama_akun = $userSnapshot->data()['name'];
-                $role_akun = $userSnapshot->data()['role'];
-            } else {
-                $nama_akun = "Name not found";
-                $role_akun = "Role not found";
-            }
-        } else {
-            $nama_akun = "Name ga kebaca";
-            $role_akun = "Role ga kebaca";
-        }
-
+    {   
         $firestore = new FirestoreClient([
             'projectId' => 'absensi-sinarindo',
         ]);
 
+        // Fetch and count users
+        $collectionReferenceUser = $firestore->collection('users');
+        $queryUser = $collectionReferenceUser->orderBy('name', 'asc');
+        $documentsUser = $queryUser->documents();
+
+        $dataUser = [];  // Initialize $dataUser
+
+        foreach ($documentsUser as $docUser) {
+            $documentDataUser = $docUser->data();
+            $name = $documentDataUser['name'] ?? null;
+            if ($name) {
+                $dataUser[] = ['name' => $name];
+            }
+        }
+
+        $totalUsers = count($dataUser);
+
+        // Fetch attendance data
         $collectionReference = $firestore->collection('karyawans');
         $query = $collectionReference->orderBy('name');
         $documents = $query->documents();
 
         $totals = [];
 
-        // pengambilan bulan dalam indonesia
-        $monthNames = [
-            'Jan' => 'Januari',
-            'Feb' => 'Februari',
-            'Mar' => 'Maret',
-            'Apr' => 'April',
-            'May' => 'Mei',
-            'Jun' => 'Juni',
-            'Jul' => 'Juli',
-            'Aug' => 'Agustus',
-            'Sep' => 'September',
-            'Oct' => 'Oktober',
-            'Nov' => 'November',
-            'Dec' => 'Desember',
-        ];
-
         foreach ($documents as $doc) {
             $documentData = $doc->data();
             $keterangan = $documentData['keterangan'] ?? null;
             $timestamps = $documentData['timestamps'] ?? null;
 
-            // ganti bulan dari array
-            $indonesianMonth = $monthNames[date('M', strtotime($timestamps))];
-
-            $recordedMonthYear = date('Y-m', strtotime($timestamps));
-                if (!isset($totals[$recordedMonthYear])) {
-                    $totals[$recordedMonthYear] = [
-                        'month' => $indonesianMonth,
-                        'year' => date('Y', strtotime($timestamps)),
-                        'total_karyawans' => 0,
+            if ($timestamps) {  // Ensure timestamps is not null
+                $currentDate = date('Y-m-d', strtotime($timestamps));
+                if (!isset($totals[$currentDate])) {
+                    $totals[$currentDate] = [
+                        'tanggal' => date('d-M-Y', strtotime($timestamps)),
+                        'data_absen_terekam' => 0,
                         'total_masuk' => 0,
                         'total_izin' => 0,
                         'total_sakit' => 0,
                     ];
                 }
 
-                $totals[$recordedMonthYear]['total_karyawans']++;
+                $totals[$currentDate]['data_absen_terekam']++;
                 if ($keterangan === "Masuk") {
-                    $totals[$recordedMonthYear]['total_masuk']++;
+                    $totals[$currentDate]['total_masuk']++;
                 } elseif ($keterangan === "Izin") {
-                    $totals[$recordedMonthYear]['total_izin']++;
+                    $totals[$currentDate]['total_izin']++;
                 } elseif ($keterangan === "Sakit") {
-                    $totals[$recordedMonthYear]['total_sakit']++;
+                    $totals[$currentDate]['total_sakit']++;
                 }
+            }
         }
 
-        // Convert the $totals array to a collection and return
-        return collect(array_values($totals));
+        return collect(array_values($totals),$totalUsers);
     }
 
     public function headings(): array
     {
-        return ['Bulan', 'Tahun', 'Jumlah Akun', 'Jumlah Masuk', 'Jumlah Izin', 'Jumlah Sakit'];
+        return ['Tanggal', 'Jumlah Data Absen Terekam', 'Jumlah Masuk', 'Jumlah Izin', 'Jumlah Sakit',];
     }
 }
