@@ -14,6 +14,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
 use App\Imports\UsersImport;
+// use Kreait\Firebase\Auth;
 
 
 use App\Helpers\Helper;
@@ -75,7 +76,9 @@ class UserController extends Controller
                 'telepon' => $telepon,
                 'role' => $role,
                 'jabatan' => $jabatan,
-                'image' => $image
+                'image' => $image,
+                'id'=>$documentId
+
             ];
         }
 
@@ -135,7 +138,45 @@ class UserController extends Controller
 
         Alert::success('Akun baru berhasil ditambahkan');
         return redirect()->route('user.index');
-    } 
+    }
+    
+    // START FUNCTION DELETE FOR ONLY FIRESTORE COLLECTIONS USERS
+    // public function deleteUser($documentId)
+    // {
+    //     try {
+    //         app('firebase.firestore')->database()->collection('users')->document($documentId)->delete();
+    //         Alert::success('Data akun pengguna berhasil dihapus');
+    //         return redirect()->route('user.index');
+    //     } catch (FirebaseException $e) {
+    //         return response()->json(['message' => 'Gagal menghapus data akun pengguna: ' . $e->getMessage()], 500);
+    //     }
+    // }
+    // END FUNCTION DELETE FOR ONLY FIRESTORE COLLECTIONS USERS
+
+    // START FUNCTION DELETE FOR FIRESTORE COLLECTIONS USERS AND USERS AUTHENTICATION
+    public function delete($documentId, Auth $firebaseAuth)
+    {
+        try {
+            // Get the user's email from Firestore
+            $userDocument = app('firebase.firestore')->database()->collection('users')->document($documentId)->snapshot();
+            $userEmail = $userDocument->data()['email'];
+
+            // Delete the user document from Firestore
+            app('firebase.firestore')->database()->collection('users')->document($documentId)->delete();
+
+            // Delete the user's authentication record from Firebase Authentication
+            $user = $firebaseAuth->getUserByEmail($userEmail);
+            $firebaseAuth->deleteUser($user->uid);
+
+            Alert::success('Data akun pengguna berhasil dihapus');
+            return redirect()->route('user.index');
+        } catch (FirebaseException $e) {
+            return response()->json(['message' => 'Gagal menghapus data akun pengguna: ' . $e->getMessage()], 500);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Terjadi kesalahan: ' . $e->getMessage()], 500);
+        }
+    }
+    // END FUNCTION DELETE FOR FIRESTORE COLLECTIONS USERS AND USERS AUTHENTICATION
     
 
     //export Data Akun Pengguna
@@ -144,6 +185,7 @@ class UserController extends Controller
         return Excel::download(new UsersExport(), 'users.xlsx');
     }
 
+    
     //import Data Akun Pengguna
     public function importUsers(Request $request)
     {

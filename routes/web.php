@@ -57,7 +57,7 @@ Route::group(['middleware' => ['auth', 'notkaryawan']], function () {
 
     // delete
     Route::delete('/delete-karyawan/{id}', [KaryawanController::class, 'delete'])->name('karyawan.delete');
-
+    Route::delete('/delete-user/{id}', [UserController::class, 'delete'])->name('user.delete');
     
     
 });

@@ -42,7 +42,7 @@
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Telepon</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Jabatan</th>
                   <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Role</th>
-                  {{-- <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th> --}}
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -69,6 +69,21 @@
                   <td class="align-middle text-center">
                     <p class="text-xs font-weight-bold mb-0">{{ $user['role'] }}</p>
                   </td>
+                  {{-- START fungsi edit dan delete --}}
+                  <td class="align-middle text-center">
+                    <form action="{{ route('user.delete', ['id' => $user['id']]) }}" method="post">
+                      @csrf
+                      @method('delete')
+                      {{-- <a href="{{ route('user.form.edit', ['id' => $user['id']]) }}">
+                        <i class="material-icons" title="Edit Card">edit</i>
+                      </a> --}}
+
+                      <button type="submit" class="btn btn-icons show_confirm">
+                        <i class="material-icons ms-auto text-dark cursor-pointer" title="Hapus user">delete</i>
+                      </button>
+                    </form>
+                  </td>
+                  {{-- END fungsi edit dan delete --}}
                   {{-- <td>
                       <a class="btn btn-link text-danger px-3 mb-0" href="javascript:;"><i class="material-icons text-sm me-2">delete</i>Delete</a>
                       <a class="btn btn-link text-dark px-3 mb-0" href="javascript:;"><i class="material-icons text-sm me-2">edit</i>Edit</a>
