@@ -15,6 +15,10 @@ class UsersImport implements ToCollection, WithHeadingRow
 
     public function __construct(FirestoreClient $firestore, FirebaseAuth $auth)
     {
+        $firestore = new FirestoreClient([
+            'projectId' => 'absensi-sinarindo',
+        ]);
+        
         $this->firestore = $firestore;
         $this->auth = $auth;
     }
