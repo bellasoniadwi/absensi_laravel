@@ -139,6 +139,84 @@ class UserController extends Controller
         Alert::success('Akun baru berhasil ditambahkan');
         return redirect()->route('user.index');
     }
+
+    
+
+    //START FUNCTION EDIT
+
+    public function validator_edit(array $data)
+    {
+        return Validator::make($data, [
+            'telepon' => ['required', 'numeric'],
+            'jabatan' => ['required', 'string', 'max:255'],
+        ]);
+    }
+
+    public function edit_form($documentId) {
+        $userCollection = app('firebase.firestore')->database()->collection('users');
+    
+        // Mengambil dokumen dari collection dan mengubahnya menjadi array
+        $userDocuments = $userCollection->documents();
+        $list_user = [];
+        foreach ($userDocuments as $document) {
+            $list_user[] = $document->data();
+        }
+
+        try {
+            $user = app('firebase.firestore')->database()->collection('users')->document($documentId)->snapshot();
+
+            return view('pages.user_edit_form', compact('user', 'documentId', 'list_user'));
+        } catch (FirebaseException $e) {
+            return response()->json(['message' => 'Gagal mengambil data user: ' . $e->getMessage()], 500);
+        }
+    }
+
+
+    public function update(Request $request, $documentId)
+    {
+        try{
+            $this->validator_edit($request->all())->validate();
+        
+            // Handle image upload and store its path in Firebase Storage
+            if ($request->hasFile('image')) {
+                $imageFile = $request->file('image');
+
+                $storage = Firebase::storage();
+                $uniqueId = microtime(true) * 10000;
+                $storagePath = 'images/' . $uniqueId . '_' . now()->format('Y-m-d') . '.jpg';
+
+                $storage->getBucket()->upload(
+                    file_get_contents($imageFile->getRealPath()),
+                    ['name' => $storagePath]
+                );
+
+                $imagePath = $storage->getBucket()->object($storagePath)->signedUrl(now()->addYears(10));
+            } else {
+                $firestore = app(Firestore::class);
+                $userRef = $firestore->database()->collection('users')->document($documentId)->snapshot();
+                $imagePath = $userRef->get('image');
+            }
+        
+                $firestore = app(Firestore::class);
+                $userRef = $firestore->database()->collection('users')->document($documentId);
+
+                $userRef->update([
+                    ['path' => 'jabatan', 'value' => $request->input('jabatan')],
+                    ['path' => 'role', 'value' => $request->input('role')],
+                    ['path' => 'telepon', 'value' => $request->input('telepon')],
+                    ['path' => 'image', 'value' => $imagePath],
+                ]);
+
+                Alert::success('Data akun pengguna berhasil diubah');
+                return redirect()->route('user.index');
+        } catch (FirebaseException $e) {
+            Session::flash('error', $e->getMessage());
+            return back()->withInput();
+        }
+    }
+
+    //END FUNCTION EDIT
+
     
     // START FUNCTION DELETE FOR ONLY FIRESTORE COLLECTIONS USERS
     // public function deleteUser($documentId)
@@ -185,7 +263,7 @@ class UserController extends Controller
         return Excel::download(new UsersExport(), 'users.xlsx');
     }
 
-    
+
     //import Data Akun Pengguna
     public function importUsers(Request $request)
     {

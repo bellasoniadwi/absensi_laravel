@@ -74,9 +74,9 @@
                     <form action="{{ route('user.delete', ['id' => $user['id']]) }}" method="post">
                       @csrf
                       @method('delete')
-                      {{-- <a href="{{ route('user.form.edit', ['id' => $user['id']]) }}">
+                      <a href="{{ route('user.form.edit', ['id' => $user['id']]) }}">
                         <i class="material-icons" title="Edit Card">edit</i>
-                      </a> --}}
+                      </a>
 
                       <button type="submit" class="btn btn-icons show_confirm">
                         <i class="material-icons ms-auto text-dark cursor-pointer" title="Hapus user">delete</i>

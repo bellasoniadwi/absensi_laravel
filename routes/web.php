@@ -42,6 +42,10 @@ Route::group(['middleware' => ['auth', 'notkaryawan']], function () {
     // edit
     Route::get('/edit-karyawan/{id}', [KaryawanController::class, 'edit_form'])->name('karyawan.form.edit');
     Route::post('/edit-karyawan/{id}', [KaryawanController::class, 'update'])->name('karyawan.update');
+    Route::get('/edit-user/{id}', [UserController::class, 'edit_form'])->name('user.form.edit');
+    Route::post('/edit-user/{id}', [UserController::class, 'update'])->name('user.update');
+
+
 
     // export
     Route::get('/export-karyawan', [KaryawanController::class, 'exportExcel'])->name('export.karyawan');
