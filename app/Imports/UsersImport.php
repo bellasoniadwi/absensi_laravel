@@ -1,31 +1,34 @@
 <?php
-// app/Imports/UsersImport.php
 
 namespace App\Imports;
-
 use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Illuminate\Support\Facades\Hash;
-use Kreait\Firebase\Firestore;
 use Google\Cloud\Firestore\FirestoreClient;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Kreait\Firebase\Auth as FirebaseAuth;
 
-class UsersImport implements ToCollection
+class UsersImport implements ToCollection, WithHeadingRow
 {
+    private $firestore;
+    private $auth;
+
+    public function __construct(FirestoreClient $firestore, FirebaseAuth $auth)
+    {
+        $this->firestore = $firestore;
+        $this->auth = $auth;
+    }
+
     public function collection(Collection $rows)
     {
-        $firestore = new FirestoreClient([
-            'projectId' => 'absensi-sinarindo',
-        ]);
-
-        $usersCollection = $firestore->collection('users');
-        $auth = app('firebase.auth');
+        $usersCollection = $this->firestore->collection('users');
 
         foreach ($rows as $row) {
             $user = [
                 'nomor_induk' => $row['nomor_induk'],
                 'name' => $row['name'],
                 'email' => $row['email'],
-                'password' => $row['password'],
+                'password' => Hash::make($row['password']), // Hash the password
                 'telepon' => $row['telepon'],
                 'jabatan' => $row['jabatan'],
                 'role' => $row['role'],
@@ -33,17 +36,13 @@ class UsersImport implements ToCollection
             ];
 
             // Save to Firestore collection
-            $usersCollection->document($user['nomor_induk'])->set($user);
+            $usersCollection->document($user['email'])->set($user);
 
             // Create authentication user
-            // Create authentication user
-            $auth->createUser([
+            $this->auth->createUser([
                 'email' => $user['email'],
-                'password' => $user['password'],
-                'displayName' => $user['name']
+                'password' => $row['password'], // Use the original password here
             ]);
         }
-        return collect($user);
     }
-
 }

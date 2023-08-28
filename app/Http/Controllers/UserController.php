@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Google\Cloud\Firestore\FirestoreClient;
+use Illuminate\Support\Facades\Hash;
 use Kreait\Firebase\Contract\Firestore;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -15,6 +16,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Exports\UsersExport;
 use App\Imports\UsersImport;
 // use Kreait\Firebase\Auth;
+use Kreait\Firebase\Auth as FirebaseAuth;
 
 
 use App\Helpers\Helper;
@@ -265,8 +267,12 @@ class UserController extends Controller
 
 
     //import Data Akun Pengguna
-    public function importUsers(Request $request)
-    {
-        return Excel::import(new UsersImport, $request->file('excel_file'));
-    }
+    //Masih error ==== Error rendering 'projects/{project=*}/databases/{database=*}': expected binding 'project' to match segment '{project=*}', instead got '' Provided bindings: Array ( [project] => [database] => (default) )
+    public function importUsers(Request $request, FirestoreClient $firestore, FirebaseAuth $auth)
+{
+    $import = new UsersImport($firestore, $auth);
+    Excel::import($import, $request->file('users_excel'));
+    
+    return redirect()->back()->with('success', 'Users imported successfully.');
+}
 }
