@@ -17,6 +17,15 @@ use App\Exports\UsersExport;
 use App\Imports\UsersImport;
 // use Kreait\Firebase\Auth;
 use Kreait\Firebase\Auth as FirebaseAuth;
+use Google\Cloud\Core\Exception\GoogleException;
+use Exception;
+use Firebase\Auth\Token\Exception\InvalidToken;
+use Kreait\Firebase\Factory;
+use Kreait\Firebase\ServiceAccount;
+use PHPExcel;
+use PhpOffice\PhpSpreadsheet\IOFactory as PHPExcel_IOFactory;
+
+
 
 
 use App\Helpers\Helper;
@@ -266,13 +275,114 @@ class UserController extends Controller
     }
 
 
-    //import Data Akun Pengguna
+    //Start import Data Akun Pengguna
     //Masih error ==== Error rendering 'projects/{project=*}/databases/{database=*}': expected binding 'project' to match segment '{project=*}', instead got '' Provided bindings: Array ( [project] => [database] => (default) )
     public function importUsers(Request $request, FirestoreClient $firestore, FirebaseAuth $auth)
-{
-    $import = new UsersImport($firestore, $auth);
-    Excel::import($import, $request->file('users_excel'));
+    {
+        $import = new UsersImport($firestore, $auth);
+        Excel::import($import, $request->file('users_excel'));
+        
+        return redirect()->back()->with('success', 'Users imported successfully.');
+    }
+    //End import Data Akun Pengguna
+
+    //START IMPORT DATA AKUN PENGGUNA
+//     public function import(Request $request)
+// {
     
+//     // Initialize Firebase
+//     $factory = (new Factory)->withServiceAccount(__DIR__.'\absensi-sinarindo-firebase-adminsdk-ox7j2-b4a007fb1c.json');
+    
+//     $firestore = app(Firestore::class);
+//     $auth = $factory->createAuth();
+    
+//     if ($request->hasFile('users_excel')) {
+//         $path = $request->file('users_excel')->getRealPath();
+        
+//         // Use the import method from the Maatwebsite Excel facade
+//         $data = Excel::import([], $path)->toArray();
+        
+//         if (count($data) > 0) {
+//             foreach ($data as $key => $value) {
+//                 $userData = [
+//                     'email' => $value['email'],
+//                     'password' => $value['password'],
+//                 ];
+    
+//                 try {
+//                     // Create a user in Firebase Authentication
+//                     $createdUser = $auth->createUser($userData);
+//                     $uid = $createdUser->uid;
+    
+//                     // Store user data in Firestore
+//                     $firestore->collection('users')->document($uid)->set([
+//                         'nomor_induk' => $value['nomor_induk'],
+//                         'name' => $value['name'],
+//                         'email' => $value['email'],
+//                         'password' => $value['password'],
+//                         'telepon' => $value['telepon'],
+//                         'jabatan' => $value['jabatan'],
+//                         'role' => $value['role'],
+//                         'image' => $value['image'],
+//                     ]);
+                    
+//                 } catch (GoogleException $e) {
+//                     return response()->json(['error' => $e->getMessage()], 401);
+//                 } catch (GoogleException $e) {
+//                     return response()->json(['error' => $e->getMessage()], 500);
+//                 }
+//             }
+    
+//             return response()->json(['success' => 'Data imported successfully'], 200);
+//         } else {
+//             return response()->json(['error' => 'No data found in the Excel file'], 404);
+//         }
+//     } else {
+//         return response()->json(['error' => 'Please select an Excel file'], 400);
+//     }
+// }
+    
+    //END IMPORT DATA AKUN PENGGUNA
+
+    //IMPORT DATA EXCEL PAKE PHPOFFICE/PHPSPREADSHEET
+    //Keterangan: bisa import user ke collections "users" dan kolom header masih ikut masuk ke firestore
+    public function importExcel(Request $request)
+{
+    // Load the Excel file
+    $objPHPExcel = PHPExcel_IOFactory::load('C:\Users\ayian\Downloads\users_excel.xlsx');
+    $worksheet = $objPHPExcel->getActiveSheet();
+    
+    // Initialize Firestore
+    $firestore = new FirestoreClient([
+        'projectId' => 'absensi-sinarindo',
+    ]);
+    
+    // Specify the Firestore collection
+    $collection = $firestore->collection('users');
+
+    // Get all rows starting from the 2nd row (assuming the 1st row is headers)
+    $excelData = $worksheet->toArray(null, true, true, true);
+    
+    // Iterate through each row and add it to Firestore
+    foreach ($excelData as $rowData) {
+        // Transform Excel data into Firestore data format
+        $firebaseData = [
+            'nomor_induk' => $rowData['A'],
+            'name' => $rowData['B'],
+            'email' => $rowData['C'],
+            'password' => $rowData['D'],
+            'telepon' => $rowData['E'],
+            'jabatan' => $rowData['F'],
+            'role' => $rowData['G'],
+            'image' => $rowData['H'],
+        ];
+
+        // Add the data to Firestore
+        $collection->add($firebaseData);
+    }
     return redirect()->back()->with('success', 'Users imported successfully.');
 }
+
+    
+    
 }
