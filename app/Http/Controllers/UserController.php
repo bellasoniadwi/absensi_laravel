@@ -88,7 +88,7 @@ class UserController extends Controller
                 'role' => $role,
                 'jabatan' => $jabatan,
                 'image' => $image,
-                'id'=>$documentId
+                'id' => $documentId
 
             ];
         }
@@ -97,14 +97,16 @@ class UserController extends Controller
     }
 
 
-    public function create_form() {
+    public function create_form()
+    {
         return view('pages.user_form');
     }
 
     protected $auth;
 
-    public function __construct(Auth $auth) {
-       $this->auth = $auth;
+    public function __construct(Auth $auth)
+    {
+        $this->auth = $auth;
     }
 
     public function validator(array $data)
@@ -120,7 +122,8 @@ class UserController extends Controller
         ]);
     }
 
-    public function create(Request $request) {
+    public function create(Request $request)
+    {
         $this->validator($request->all())->validate();
         $userProperties = [
             'email' => $request->input('email'),
@@ -151,7 +154,7 @@ class UserController extends Controller
         return redirect()->route('user.index');
     }
 
-    
+
 
     //START FUNCTION EDIT
 
@@ -163,9 +166,10 @@ class UserController extends Controller
         ]);
     }
 
-    public function edit_form($documentId) {
+    public function edit_form($documentId)
+    {
         $userCollection = app('firebase.firestore')->database()->collection('users');
-    
+
         // Mengambil dokumen dari collection dan mengubahnya menjadi array
         $userDocuments = $userCollection->documents();
         $list_user = [];
@@ -185,9 +189,9 @@ class UserController extends Controller
 
     public function update(Request $request, $documentId)
     {
-        try{
+        try {
             $this->validator_edit($request->all())->validate();
-        
+
             // Handle image upload and store its path in Firebase Storage
             if ($request->hasFile('image')) {
                 $imageFile = $request->file('image');
@@ -207,19 +211,19 @@ class UserController extends Controller
                 $userRef = $firestore->database()->collection('users')->document($documentId)->snapshot();
                 $imagePath = $userRef->get('image');
             }
-        
-                $firestore = app(Firestore::class);
-                $userRef = $firestore->database()->collection('users')->document($documentId);
 
-                $userRef->update([
-                    ['path' => 'jabatan', 'value' => $request->input('jabatan')],
-                    ['path' => 'role', 'value' => $request->input('role')],
-                    ['path' => 'telepon', 'value' => $request->input('telepon')],
-                    ['path' => 'image', 'value' => $imagePath],
-                ]);
+            $firestore = app(Firestore::class);
+            $userRef = $firestore->database()->collection('users')->document($documentId);
 
-                Alert::success('Data akun pengguna berhasil diubah');
-                return redirect()->route('user.index');
+            $userRef->update([
+                ['path' => 'jabatan', 'value' => $request->input('jabatan')],
+                ['path' => 'role', 'value' => $request->input('role')],
+                ['path' => 'telepon', 'value' => $request->input('telepon')],
+                ['path' => 'image', 'value' => $imagePath],
+            ]);
+
+            Alert::success('Data akun pengguna berhasil diubah');
+            return redirect()->route('user.index');
         } catch (FirebaseException $e) {
             Session::flash('error', $e->getMessage());
             return back()->withInput();
@@ -228,7 +232,7 @@ class UserController extends Controller
 
     //END FUNCTION EDIT
 
-    
+
     // START FUNCTION DELETE FOR ONLY FIRESTORE COLLECTIONS USERS
     // public function deleteUser($documentId)
     // {
@@ -266,7 +270,7 @@ class UserController extends Controller
         }
     }
     // END FUNCTION DELETE FOR FIRESTORE COLLECTIONS USERS AND USERS AUTHENTICATION
-    
+
 
     //export Data Akun Pengguna
     public function exportUsers()
@@ -275,114 +279,40 @@ class UserController extends Controller
     }
 
 
-    //Start import Data Akun Pengguna
-    //Masih error ==== Error rendering 'projects/{project=*}/databases/{database=*}': expected binding 'project' to match segment '{project=*}', instead got '' Provided bindings: Array ( [project] => [database] => (default) )
-    public function importUsers(Request $request, FirestoreClient $firestore, FirebaseAuth $auth)
+    public function importExcel(Request $request)
     {
-        $import = new UsersImport($firestore, $auth);
-        Excel::import($import, $request->file('users_excel'));
-        
+        // Load the Excel file
+        $objPHPExcel = PHPExcel_IOFactory::load('C:\Users\bella\Downloads\users_excel.xlsx');
+        $worksheet = $objPHPExcel->getActiveSheet();
+
+        // Initialize Firestore
+        $firestore = new FirestoreClient([
+            'projectId' => 'absensi-sinarindo',
+        ]);
+
+        // Get all rows starting from the 2nd row (assuming the 1st row is headers)
+        $excelData = $worksheet->toArray(null, true, true, true);
+
+        // Iterate through each row and add it to Firestore
+        foreach ($excelData as $rowData) {
+            $firebaseData = [
+                'nomor_induk' => Helper::NomorKaryawanGenerator(),
+                'name' => $rowData['B'],
+                'email' => $rowData['C'],
+                'password' => $rowData['D'],
+                'telepon' => $rowData['E'],
+                'jabatan' => $rowData['F'],
+                'role' => 'Karyawan',
+                'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81',
+            ];
+
+            // Add the data to Firestore
+            $createdUser = $this->auth->createUser($firebaseData);
+            // Specify the Firestore collection
+            $collection = $firestore->collection('users')->document($createdUser->uid);
+
+            $collection->set($firebaseData);
+        }
         return redirect()->back()->with('success', 'Users imported successfully.');
     }
-    //End import Data Akun Pengguna
-
-    //START IMPORT DATA AKUN PENGGUNA
-//     public function import(Request $request)
-// {
-    
-//     // Initialize Firebase
-//     $factory = (new Factory)->withServiceAccount(__DIR__.'\absensi-sinarindo-firebase-adminsdk-ox7j2-b4a007fb1c.json');
-    
-//     $firestore = app(Firestore::class);
-//     $auth = $factory->createAuth();
-    
-//     if ($request->hasFile('users_excel')) {
-//         $path = $request->file('users_excel')->getRealPath();
-        
-//         // Use the import method from the Maatwebsite Excel facade
-//         $data = Excel::import([], $path)->toArray();
-        
-//         if (count($data) > 0) {
-//             foreach ($data as $key => $value) {
-//                 $userData = [
-//                     'email' => $value['email'],
-//                     'password' => $value['password'],
-//                 ];
-    
-//                 try {
-//                     // Create a user in Firebase Authentication
-//                     $createdUser = $auth->createUser($userData);
-//                     $uid = $createdUser->uid;
-    
-//                     // Store user data in Firestore
-//                     $firestore->collection('users')->document($uid)->set([
-//                         'nomor_induk' => $value['nomor_induk'],
-//                         'name' => $value['name'],
-//                         'email' => $value['email'],
-//                         'password' => $value['password'],
-//                         'telepon' => $value['telepon'],
-//                         'jabatan' => $value['jabatan'],
-//                         'role' => $value['role'],
-//                         'image' => $value['image'],
-//                     ]);
-                    
-//                 } catch (GoogleException $e) {
-//                     return response()->json(['error' => $e->getMessage()], 401);
-//                 } catch (GoogleException $e) {
-//                     return response()->json(['error' => $e->getMessage()], 500);
-//                 }
-//             }
-    
-//             return response()->json(['success' => 'Data imported successfully'], 200);
-//         } else {
-//             return response()->json(['error' => 'No data found in the Excel file'], 404);
-//         }
-//     } else {
-//         return response()->json(['error' => 'Please select an Excel file'], 400);
-//     }
-// }
-    
-    //END IMPORT DATA AKUN PENGGUNA
-
-    //IMPORT DATA EXCEL PAKE PHPOFFICE/PHPSPREADSHEET
-    //Keterangan: bisa import user ke collections "users" dan kolom header masih ikut masuk ke firestore
-    public function importExcel(Request $request)
-{
-    // Load the Excel file
-    $objPHPExcel = PHPExcel_IOFactory::load('C:\Users\ayian\Downloads\users_excel.xlsx');
-    $worksheet = $objPHPExcel->getActiveSheet();
-    
-    // Initialize Firestore
-    $firestore = new FirestoreClient([
-        'projectId' => 'absensi-sinarindo',
-    ]);
-    
-    // Specify the Firestore collection
-    $collection = $firestore->collection('users');
-
-    // Get all rows starting from the 2nd row (assuming the 1st row is headers)
-    $excelData = $worksheet->toArray(null, true, true, true);
-    
-    // Iterate through each row and add it to Firestore
-    foreach ($excelData as $rowData) {
-        // Transform Excel data into Firestore data format
-        $firebaseData = [
-            'nomor_induk' => $rowData['A'],
-            'name' => $rowData['B'],
-            'email' => $rowData['C'],
-            'password' => $rowData['D'],
-            'telepon' => $rowData['E'],
-            'jabatan' => $rowData['F'],
-            'role' => $rowData['G'],
-            'image' => $rowData['H'],
-        ];
-
-        // Add the data to Firestore
-        $collection->add($firebaseData);
-    }
-    return redirect()->back()->with('success', 'Users imported successfully.');
-}
-
-    
-    
 }

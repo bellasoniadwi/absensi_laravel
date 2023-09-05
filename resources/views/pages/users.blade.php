@@ -8,19 +8,20 @@
 
 @section('content')
 <div class="row">
-    <!-- start export rekap data from firestore -->
       <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
         <a href="{{ route('export.users') }}" class="btn btn-success">Export Excel</a>
       </div>
-    <!-- end rekap karyawans data from firestore -->
-    
-    <!-- start import users -->
-    <form action="{{ route('import.users') }}" method="POST" enctype="multipart/form-data">
-      @csrf
-      <input type="file" name="users_excel" accept=".xlsx, .xls">
-      <button type="submit">Import Users</button>
-    </form>
-  <!-- start import users -->
+      <div class="col-xl-9 col-sm-6 mb-xl-0 mb-8">
+        <form action="{{ route('import.users') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            <div class="form-group d-flex justify-content-end">
+                <div class="custom-file">
+                        <input type="file" name="users_excel" class="custom-file-input" id="customFile" accept=".xlsx, .xls" required>
+                        <button class="btn btn-info ml-2" type="submit">Import</button>
+                </div>
+            </div>
+        </form>
+    </div>
     <div class="col-12">
       <div class="card my-4">
         <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
