@@ -17,7 +17,7 @@
             <div class="form-group d-flex justify-content-end">
                 <div class="custom-file">
                         <input type="file" name="users_excel" class="custom-file-input" id="customFile" accept=".xlsx, .xls" required>
-                        <button class="btn btn-info ml-2" type="submit">Import</button>
+                        <button class="btn btn-success ml-2" type="submit">Import</button>
                 </div>
             </div>
         </form>
@@ -86,10 +86,6 @@
                     </form>
                   </td>
                   {{-- END fungsi edit dan delete --}}
-                  {{-- <td>
-                      <a class="btn btn-link text-danger px-3 mb-0" href="javascript:;"><i class="material-icons text-sm me-2">delete</i>Delete</a>
-                      <a class="btn btn-link text-dark px-3 mb-0" href="javascript:;"><i class="material-icons text-sm me-2">edit</i>Edit</a>
-                  </td> --}}
                 </tr>
                 @endforeach
               </tbody>
@@ -99,4 +95,30 @@
       </div>
     </div>
   </div>
+@endsection
+@section('js')
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script type="text/javascript">
+ 
+     $('.show_confirm').click(function(event) {
+          var form =  $(this).closest("form");
+          var name = $(this).data("name");
+          event.preventDefault();
+          swal({
+              title: `Yakin ingin menghapus data akun?`,
+              text: "Data ini akan terhapus permanen setelah anda menyetujui pesan ini",
+              icon: "warning",
+              buttons: true,
+              dangerMode: true,
+          })
+          .then((willDelete) => {
+            if (willDelete) {
+              form.submit();
+            } else {
+                swal("Akun batal dihapus");
+            }
+          });
+      });
+  
+</script>
 @endsection

@@ -331,14 +331,13 @@ class UserController extends Controller
 
     private function findUserByEmail($firestore, $email)
     {
-        // Query Firestore to find a user with the given email
         $query = $firestore->collection('users')->where('email', '=', $email);
         $documents = $query->documents();
 
         foreach ($documents as $document) {
-            return $document; // Return the existing user document
+            return $document;
         }
 
-        return null; // Return null if no user with the email is found
+        return null;
     }
 }
