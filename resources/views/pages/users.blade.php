@@ -119,6 +119,13 @@
             }
           });
       });
+
+      $(document).ready(function() {
+            // Tampilkan SweetAlert setelah proses import selesai
+            @if (Session::has('success'))
+                swal("Success", "{{ Session::get('success') }}", "success");
+            @endif
+        });
   
 </script>
 @endsection

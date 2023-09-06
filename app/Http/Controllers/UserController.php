@@ -326,7 +326,7 @@ class UserController extends Controller
                 $collection->set($firebaseData);
             }
         }
-        return redirect()->back()->with('success', 'Users imported successfully.');
+        return redirect()->back()->with('success', 'Data akun berhasil diimport');
     }
 
     private function findUserByEmail($firestore, $email)
