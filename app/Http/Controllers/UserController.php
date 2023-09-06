@@ -276,7 +276,7 @@ class UserController extends Controller
     }
 
 
-    public function importExcel(Request $request)
+    public function importUsers(Request $request)
     {
         $uploadedFile = $request->file('users_excel');
 
