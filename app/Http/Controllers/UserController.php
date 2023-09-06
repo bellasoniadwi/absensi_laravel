@@ -279,7 +279,7 @@ class UserController extends Controller
     public function importExcel(Request $request)
     {
         $uploadedFile = $request->file('users_excel');
-        
+
         // Load the Excel file
         $objPHPExcel = PHPExcel_IOFactory::load($uploadedFile);
         $worksheet = $objPHPExcel->getActiveSheet();
@@ -291,16 +291,22 @@ class UserController extends Controller
 
         // Get all rows starting from the 2nd row (assuming the 1st row is headers)
         $excelData = $worksheet->toArray(null, true, true, true);
+        $skipFirstRow = true;
 
         // Iterate through each row and add it to Firestore
         foreach ($excelData as $rowData) {
+            if ($skipFirstRow) {
+                $skipFirstRow = false;
+                continue;
+            }
+        
             $firebaseData = [
                 'nomor_induk' => Helper::NomorKaryawanGenerator(),
-                'name' => $rowData['B'],
-                'email' => $rowData['C'],
-                'password' => $rowData['D'],
-                'telepon' => $rowData['E'],
-                'jabatan' => $rowData['F'],
+                'name' => $rowData['A'],
+                'email' => $rowData['B'],
+                'password' => $rowData['B'],
+                'telepon' => $rowData['C'],
+                'jabatan' => $rowData['D'],
                 'role' => 'Karyawan',
                 'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81',
             ];
