@@ -35,34 +35,11 @@ class UserController extends Controller
 
     public function index()
     {
-        $user = auth()->user();
-
-        if ($user) {
-            $id = $user->localId;
-
-            $firestore = app('firebase.firestore');
-            $database = $firestore->database();
-
-            $userDocRef = $database->collection('users')->document($id);
-            $userSnapshot = $userDocRef->snapshot();
-
-            if ($userSnapshot->exists()) {
-                $nama_akun = $userSnapshot->data()['name'];
-                $role_akun = $userSnapshot->data()['role'];
-            } else {
-                $nama_akun = "Name not found";
-                $role_akun = "Role not found";
-            }
-        } else {
-            $nama_akun = "Name ga kebaca";
-            $role_akun = "Role ga kebaca";
-        }
-
         $firestore = new FirestoreClient([
             'projectId' => 'absensi-sinarindo',
         ]);
 
-        $collectionReference = $firestore->collection('users');
+        $collectionReference = $firestore->collection('users')->where('role', '=', 'Karyawan');
         $data = [];
         $query = $collectionReference->orderBy('name');
         $documents = $query->documents();
@@ -79,6 +56,7 @@ class UserController extends Controller
             $role = $documentData['role'] ?? null;
             $jabatan = $documentData['jabatan'] ?? null;
             $image = $documentData['image'] ?? null;
+            $isblocking = $documentData['isblocking'] ?? null;
 
             $data[] = [
                 'name' => $name,
@@ -88,8 +66,8 @@ class UserController extends Controller
                 'role' => $role,
                 'jabatan' => $jabatan,
                 'image' => $image,
-                'id' => $documentId
-
+                'id' => $documentId,
+                'isblocking' => $isblocking
             ];
         }
 
@@ -117,8 +95,6 @@ class UserController extends Controller
             'telepon' => ['required', 'numeric'],
             'jabatan' => ['required', 'string', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
-            // 'role' => ['required', 'string', 'max:255'],
-            // 'image' => ['mimes:png,jpg,jpeg', 'max:2048']
         ]);
     }
 
@@ -133,6 +109,7 @@ class UserController extends Controller
             'telepon' => $request->input('telepon'),
             'jabatan' => $request->input('jabatan'),
             'role' => 'Karyawan',
+            'isblocking' => false,
             'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
         ];
 
@@ -147,6 +124,7 @@ class UserController extends Controller
             'telepon' => $request->input('telepon'),
             'jabatan' => $request->input('jabatan'),
             'role' => 'Karyawan',
+            'isblocking' => false,
             'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
         ]);
 
@@ -229,20 +207,6 @@ class UserController extends Controller
     }
     //END FUNCTION EDIT
 
-
-    // START FUNCTION DELETE FOR ONLY FIRESTORE COLLECTIONS USERS
-    // public function deleteUser($documentId)
-    // {
-    //     try {
-    //         app('firebase.firestore')->database()->collection('users')->document($documentId)->delete();
-    //         Alert::success('Data akun pengguna berhasil dihapus');
-    //         return redirect()->route('user.index');
-    //     } catch (FirebaseException $e) {
-    //         return response()->json(['message' => 'Gagal menghapus data akun pengguna: ' . $e->getMessage()], 500);
-    //     }
-    // }
-    // END FUNCTION DELETE FOR ONLY FIRESTORE COLLECTIONS USERS
-
     // START FUNCTION DELETE FOR FIRESTORE COLLECTIONS USERS AND USERS AUTHENTICATION
     public function delete($documentId, Auth $firebaseAuth)
     {
@@ -315,6 +279,7 @@ class UserController extends Controller
                     'telepon' => $rowData['C'],
                     'jabatan' => $rowData['D'],
                     'role' => 'Karyawan',
+                    'isblocking' => false,
                     'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81',
                 ];
 
@@ -330,6 +295,7 @@ class UserController extends Controller
                     'telepon' => $rowData['C'],
                     'jabatan' => $rowData['D'],
                     'role' => 'Karyawan',
+                    'isblocking' => false,
                     'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81',
                 ]);
             }
@@ -348,4 +314,23 @@ class UserController extends Controller
 
         return null;
     }
+
+    public function updateStatus($id)
+    {
+        $firestore = app(Firestore::class);
+        $userRef = $firestore->database()->collection('users')->document($id);
+
+        $user = $userRef->snapshot();
+
+        if (!$user) {
+            return redirect()->back()->with('error', 'User tidak ditemukan.');
+        }
+
+        $userRef->update([
+            ['path' => 'isblocking', 'value' => !$user['isblocking']],
+        ]);
+
+        return redirect()->back()->with('success', 'Status user berhasil diubah.');
+    }
+
 }

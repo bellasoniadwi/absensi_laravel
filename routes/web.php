@@ -60,7 +60,8 @@ Route::group(['middleware' => ['auth', 'notkaryawan']], function () {
     Route::delete('/delete-karyawan/{id}', [KaryawanController::class, 'delete'])->name('karyawan.delete');
     Route::delete('/delete-user/{id}', [UserController::class, 'delete'])->name('user.delete');
     
-    
+    Route::post('user/updateStatus/{id}', [UserController::class, 'updateStatus'])->name('user.updateStatus');
+
 });
 
 
