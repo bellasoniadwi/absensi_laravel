@@ -299,25 +299,46 @@ class UserController extends Controller
                 $skipFirstRow = false;
                 continue;
             }
-        
-            $firebaseData = [
-                'nomor_induk' => Helper::NomorKaryawanGenerator(),
-                'name' => $rowData['A'],
-                'email' => $rowData['B'],
-                'password' => $rowData['B'],
-                'telepon' => $rowData['C'],
-                'jabatan' => $rowData['D'],
-                'role' => 'Karyawan',
-                'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81',
-            ];
 
-            // Add the data to Firestore
-            $createdUser = $this->auth->createUser($firebaseData);
-            // Specify the Firestore collection
-            $collection = $firestore->collection('users')->document($createdUser->uid);
+            $email = $rowData['B'];
 
-            $collection->set($firebaseData);
+            // Cek email telah terpakai/belum
+            $existingUser = $this->findUserByEmail($firestore, $email);
+
+            // email belum terpakai
+            if (!$existingUser) {
+                $firebaseData = [
+                    'nomor_induk' => Helper::NomorKaryawanGenerator(),
+                    'name' => $rowData['A'],
+                    'email' => $email,
+                    'password' => $rowData['B'],
+                    'telepon' => $rowData['C'],
+                    'jabatan' => $rowData['D'],
+                    'role' => 'Karyawan',
+                    'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81',
+                ];
+
+                // Add the data to Firestore
+                $createdUser = $this->auth->createUser($firebaseData);
+
+                // Specify the Firestore collection
+                $collection = $firestore->collection('users')->document($createdUser->uid);
+                $collection->set($firebaseData);
+            }
         }
         return redirect()->back()->with('success', 'Users imported successfully.');
+    }
+
+    private function findUserByEmail($firestore, $email)
+    {
+        // Query Firestore to find a user with the given email
+        $query = $firestore->collection('users')->where('email', '=', $email);
+        $documents = $query->documents();
+
+        foreach ($documents as $document) {
+            return $document; // Return the existing user document
+        }
+
+        return null; // Return null if no user with the email is found
     }
 }
