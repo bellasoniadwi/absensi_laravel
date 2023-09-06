@@ -157,7 +157,6 @@ class UserController extends Controller
 
 
     //START FUNCTION EDIT
-
     public function validator_edit(array $data)
     {
         return Validator::make($data, [
@@ -170,7 +169,6 @@ class UserController extends Controller
     {
         $userCollection = app('firebase.firestore')->database()->collection('users');
 
-        // Mengambil dokumen dari collection dan mengubahnya menjadi array
         $userDocuments = $userCollection->documents();
         $list_user = [];
         foreach ($userDocuments as $document) {
@@ -229,7 +227,6 @@ class UserController extends Controller
             return back()->withInput();
         }
     }
-
     //END FUNCTION EDIT
 
 
@@ -281,8 +278,10 @@ class UserController extends Controller
 
     public function importExcel(Request $request)
     {
+        $uploadedFile = $request->file('users_excel');
+        
         // Load the Excel file
-        $objPHPExcel = PHPExcel_IOFactory::load('C:\Users\bella\Downloads\users_excel.xlsx');
+        $objPHPExcel = PHPExcel_IOFactory::load($uploadedFile);
         $worksheet = $objPHPExcel->getActiveSheet();
 
         // Initialize Firestore
