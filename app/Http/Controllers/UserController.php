@@ -323,7 +323,15 @@ class UserController extends Controller
 
                 // Specify the Firestore collection
                 $collection = $firestore->collection('users')->document($createdUser->uid);
-                $collection->set($firebaseData);
+                $collection->set([
+                    'nomor_induk' => Helper::NomorKaryawanGenerator(),
+                    'name' => $rowData['A'],
+                    'email' => $email,
+                    'telepon' => $rowData['C'],
+                    'jabatan' => $rowData['D'],
+                    'role' => 'Karyawan',
+                    'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81',
+                ]);
             }
         }
         return redirect()->back()->with('success', 'Data akun berhasil diimport');
