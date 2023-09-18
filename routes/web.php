@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\KaryawanController;
+use App\Http\Controllers\LemburController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\Auth\ResetController;
 use Illuminate\Support\Facades\Auth;
@@ -32,6 +33,7 @@ Route::group(['middleware' => ['auth', 'notkaryawan']], function () {
     // index
     Route::get('/karyawan', [KaryawanController::class, 'index'])->name('karyawan');
     Route::get('/user', [UserController::class, 'index'])->name('user.index');
+    Route::get('/lembur', [LemburController::class, 'index'])->name('lembur.index');
 
     // create
     Route::get('/create-user', [UserController::class, 'create_form'])->name('user.form');
@@ -60,7 +62,9 @@ Route::group(['middleware' => ['auth', 'notkaryawan']], function () {
     Route::delete('/delete-karyawan/{id}', [KaryawanController::class, 'delete'])->name('karyawan.delete');
     Route::delete('/delete-user/{id}', [UserController::class, 'delete'])->name('user.delete');
     
+    //boolean status
     Route::post('user/updateStatus/{id}', [UserController::class, 'updateStatus'])->name('user.updateStatus');
+    Route::post('lembur/updateStatus/{id}', [LemburController::class, 'updateStatus'])->name('lembur.updateStatus');
 
 });
 

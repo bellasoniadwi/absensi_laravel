@@ -55,6 +55,7 @@ class KaryawanController extends Controller
             $documentData = $doc->data();
             $documentId = $doc->id();
             $name = $documentData['name'] ?? null;
+            $kategori = $documentData['kategori'] ?? null;
             $keterangan = $documentData['keterangan'] ?? null;
             $status = $documentData['status'] ?? null;
             $timestamps = $documentData['timestamps'] ?? null;
@@ -65,6 +66,7 @@ class KaryawanController extends Controller
 
             $data[] = [
                 'name' => $name,
+                'kategori' => $kategori,
                 'keterangan' => $keterangan,
                 'status' => $status,
                 'timestamps' => $timestamps,
