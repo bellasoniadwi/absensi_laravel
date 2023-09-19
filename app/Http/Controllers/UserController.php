@@ -110,7 +110,7 @@ class UserController extends Controller
             'jabatan' => $request->input('jabatan'),
             'role' => 'Karyawan',
             'isblocking' => false,
-            'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
+            'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=dba9c968-0dce-4513-ad7f-41b4f04bf38a'
         ];
 
         $createdUser = $this->auth->createUser($userProperties);
@@ -125,7 +125,7 @@ class UserController extends Controller
             'jabatan' => $request->input('jabatan'),
             'role' => 'Karyawan',
             'isblocking' => false,
-            'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81'
+            'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=dba9c968-0dce-4513-ad7f-41b4f04bf38a'
         ]);
 
         Alert::success('Akun baru berhasil ditambahkan');
@@ -280,7 +280,7 @@ class UserController extends Controller
                     'jabatan' => $rowData['D'],
                     'role' => 'Karyawan',
                     'isblocking' => false,
-                    'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81',
+                    'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=dba9c968-0dce-4513-ad7f-41b4f04bf38a',
                 ];
 
                 // Add the data to Firestore
@@ -296,7 +296,7 @@ class UserController extends Controller
                     'jabatan' => $rowData['D'],
                     'role' => 'Karyawan',
                     'isblocking' => false,
-                    'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=d93b7e3d-162b-4eb2-8ddc-390dd0588e81',
+                    'image' => 'https://firebasestorage.googleapis.com/v0/b/absensi-sinarindo.appspot.com/o/images%2Fsgs.png?alt=media&token=dba9c968-0dce-4513-ad7f-41b4f04bf38a',
                 ]);
             }
         }
