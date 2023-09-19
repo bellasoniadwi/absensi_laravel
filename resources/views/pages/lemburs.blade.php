@@ -41,20 +41,27 @@
                 <td class="align-middle text-center">
                   <p class="text-xs font-weight-bold mb-0">{{ $lembur['durasi'] }}</p>
                 </td>
-                <td class="align-middle text-center">
-                  <p class="text-xs font-weight-bold mb-0">{{ $lembur['alasan'] }}</p>
+                <td class="align-middle text-center text-xs font-weight-bold mb-0s">
+                  
+                  @php
+                    $alasan = $lembur['alasan'];
+                    $alasanChunks = str_split($alasan, 70); // Pecah kalimat menjadi potongan 10 kata
+                  @endphp
+                  @foreach($alasanChunks as $chunk)
+                    {{ $chunk }}<br>
+                  @endforeach
                 </td>
                 <td class="align-middle text-center">
                   <form action="{{ route('lembur.updateStatus', ['id' => $lembur['id']]) }}"
                       method="post">
                       @csrf
                       <button type="submit" class="btn btn-icons show_confirm_status">
-                          @if ($lembur['isblocking'] == false)
-                              <span class="badge badge-sm bg-gradient-success">
+                          @if ($lembur['status'] == false)
+                              <span class="badge badge-sm bg-gradient-danger">
                                   Menunggu
                               </span>
                           @else
-                              <span class="badge badge-sm bg-gradient-warning">
+                              <span class="badge badge-sm bg-gradient-success">
                                   Disetujui
                               </span>
                           @endif
@@ -70,4 +77,30 @@
       </div>
     </div>
   </div>
+@endsection
+@section('js')
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script type="text/javascript">
+
+    $('.show_confirm_status').click(function(event) {
+      var form = $(this).closest("form");
+      var name = $(this).data("name");
+      event.preventDefault();
+      swal({
+              title: `Yakin ingin mengubah status lembur?`,
+              text: "Pengajuan lembur akan disetujui",
+              icon: "warning",
+              buttons: true,
+              dangerMode: true,
+          })
+          .then((willDelete) => {
+              if (willDelete) {
+                  form.submit();
+              } else {
+                  swal("Status lembur batal diubah");
+              }
+          });
+    });
+
+    </script>
 @endsection
