@@ -16,17 +16,13 @@ class HomeController extends Controller
 
     public function dashboard()
     {
-        
+
         $firestore = new FirestoreClient([
             'projectId' => 'absensi-sinarindo',
         ]);
-        
         $collectionReference = $firestore->collection('karyawans');
-
         $query = $collectionReference->orderBy('name');
         $documents = $query->documents();
-
-        // Inisialisasi array
         $totals = [];
         $dataUser = [];
         $totalKeteranganPerName = [];
@@ -38,49 +34,52 @@ class HomeController extends Controller
             $documentData = $doc->data();
             $keterangan = $documentData['keterangan'] ?? null;
             $status = $documentData['status'] ?? null;
+            $kategori = $documentData['kategori'] ?? null;
             $timestamps = $documentData['timestamps'] ?? null;
             $name = $documentData['name'] ?? null;
 
             $recordedMonthYear = date('Y-m', strtotime($timestamps));
-            if ($recordedMonthYear === $currentMonthYear) {
-                if (!isset($totals[$name])) {
-                    $totals[$name] = [
-                        'masuk' => 0,
-                        'izin' => 0,
-                        'sakit' => 0,
-                        'terlambat' => 0,
-                        'tepat_waktu' => 0,
-                    ];
-                }
-                // Hitung total keterangan "Masuk", "Izin", dan "Sakit" per field "name"
-                if ($keterangan === "Masuk") {
-                    $totals[$name]['masuk']++;
-                    if (!isset($totalKeteranganPerName[$name])) {
-                        $totalKeteranganPerName[$name] = 0;
+            if ($kategori == "Datang") {
+                if ($recordedMonthYear == $currentMonthYear) {
+                    if (!isset($totals[$name])) {
+                        $totals[$name] = [
+                            'masuk' => 0,
+                            'izin' => 0,
+                            'terlambat' => 0,
+                            'tepat_waktu' => 0,
+                        ];
                     }
-                    $totalKeteranganPerName[$name]++;
-                } elseif ($keterangan === "Izin") {
-                    $totals[$name]['izin']++;
-                    if (!isset($totalKeteranganPerName[$name])) {
-                        $totalKeteranganPerName[$name] = 0;
+                    // Hitung total keterangan "Masuk", "Izin", per field "name"
+                    if ($keterangan == "Masuk") {
+                        if ($keterangan == "Masuk") {
+                            if ($status == "Tepat Waktu") {
+                                $totals[$name]['masuk']++;
+                                if (!isset($totalKeteranganPerName[$name])) {
+                                    $totalKeteranganPerName[$name] = 0;
+                                }
+                                $totalKeteranganPerName[$name]++;
+                            }elseif ($status == "Terlambat") {
+                                $totals[$name]['terlambat']++;
+                                if (!isset($totalKeteranganPerName[$name])) {
+                                    $totalKeteranganPerName[$name] = 0;
+                                }
+                                $totalKeteranganPerName[$name]++;
+                            }
+                        }
+                    } elseif ($keterangan == "Izin") {
+                        $totals[$name]['izin']++;
+                        if (!isset($totalKeteranganPerName[$name])) {
+                            $totalKeteranganPerName[$name] = 0;
+                        }
+                        $totalKeteranganPerName[$name]++;
                     }
-                    $totalKeteranganPerName[$name]++;
-                } elseif ($keterangan === "Sakit") {
-                    $totals[$name]['sakit']++;
-                    if (!isset($totalKeteranganPerName[$name])) {
-                        $totalKeteranganPerName[$name] = 0;
-                    }
-                    $totalKeteranganPerName[$name]++;
-                }
 
-                if ($status === "Terlambat") {
-                    $totals[$name]['terlambat']++;
-                    
-                } elseif ($status === "Tepat Waktu") {
-                    $totals[$name]['tepat_waktu']++;
-                    
+                    // if ($status == "Terlambat") {
+                    //     $totals[$name]['terlambat']++;
+                    // } elseif ($status == "Tepat Waktu") {
+                    //     $totals[$name]['tepat_waktu']++;
+                    // }
                 }
-
             }
         }
 
@@ -113,43 +112,34 @@ class HomeController extends Controller
                 $activeDaysInMonth++;
             }
         }
-        
+
         // Inisiasi nilai awal
         $totalMasuk = 0;
         $totalIzin = 0;
-        $totalSakit = 0;
         $totalTerlambat = 0;
-        $totalTepatWaktu = 0;
+        // $totalTepatWaktu = 0;
 
-        // menghitung totalMasuk, totalIzin, dan totalSakit dari value field "nama" yang sama
+        // menghitung totalMasuk, totalIzin, dari value field "nama" yang sama
         foreach ($totals as $nameTotal) {
             $totalMasuk += $nameTotal['masuk'];
             $totalIzin += $nameTotal['izin'];
-            $totalSakit += $nameTotal['sakit'];
             $totalTerlambat += $nameTotal['terlambat'];
-            $totalTepatWaktu += $nameTotal['tepat_waktu'];
+            // $totalTepatWaktu += $nameTotal['tepat_waktu'];
         }
-
-            
-
         // Menghitung total tanpa keterangan per nama
         foreach ($totals as $name => $nameTotal) {
             $totalWithoutKeteranganPerName[$name] = $activeDaysInMonth - $totalKeteranganPerName[$name];
         }
-
         // Menghitung jumlah total tanpa keterangan
-        $totalWithoutKeterangan = $activeDaysInMonth - ($totalMasuk + $totalIzin + $totalSakit);
+        $totalWithoutKeterangan = $activeDaysInMonth - ($totalMasuk + $totalIzin);
 
-        //Start function untuk menampilkan Akun Pengguna Tercatat di dashboard
+        // CARD PENGGUNA
         $collectionReferenceUser = $firestore->collection('users');
-        $queryUser = $collectionReferenceUser->orderBy('name', 'asc');
+        $queryUser = $collectionReferenceUser->where('role', '=', 'Karyawan')->where('isblocking', '==', false);
         $documentsUser = $queryUser->documents();
-
-        //menghitung akun pengguna yang tercatatat pada firestore collections users
         foreach ($documentsUser as $docUser) {
             $documentDataUser = $docUser->data();
             $name = $documentDataUser['name'] ?? null;
-
             $dataUser[] = [
                 'name' => $name
             ];
@@ -157,35 +147,33 @@ class HomeController extends Controller
         $totalKaryawans = count($dataUser);
 
 
-        // Ambil data absensi hanya untuk hari ini
+        // 3 CARD REKAPAN
         $currentDate = date('Y-m-d');
-        $documents = $query->documents();
+        $queryCard = $collectionReference->where('kategori', '=', 'Datang');
+        $documentsCard = $queryCard->documents();
+        $totalMasukTepatWaktu = 0;
+        $totalTidakMasukIzin = 0;
+        $totalMasukTelat = 0;
+        foreach ($documentsCard as $docCard) {
+            $documentDataCard = $docCard->data();
+            $keterangan = $documentDataCard['keterangan'] ?? null;
+            $status = $documentDataCard['status'] ?? null;
+            $timestamps = $documentDataCard['timestamps'] ?? null;
 
-        // Inisialisasi nilai awal
-        $totalMasuk = 0;
-        $totalIzin = 0;
-        $totalSakit = 0;
-
-        // Menghitung totalMasuk, totalIzin, dan totalSakit dari value field "nama" yang sama
-        foreach ($documents as $doc) {
-            $documentData = $doc->data();
-            $keterangan = $documentData['keterangan'] ?? null;
-            $timestamps = $documentData['timestamps'] ?? null;
-
-            // Filter hanya data hari ini
-            if (date('Y-m-d', strtotime($timestamps)) === $currentDate) {
-                if ($keterangan === "Masuk") {
-                    $totalMasuk++;
-                } elseif ($keterangan === "Izin") {
-                    $totalIzin++;
-                } elseif ($keterangan === "Sakit") {
-                    $totalSakit++;
+            if (date('Y-m-d', strtotime($timestamps)) == $currentDate) {
+                if ($keterangan == "Masuk") {
+                    if ($status == "Tepat Waktu") {
+                        $totalMasukTepatWaktu++;
+                    } else {
+                        $totalMasukTelat++;
+                    }
+                } elseif ($keterangan == "Izin") {
+                    $totalTidakMasukIzin++;
                 }
             }
         }
-
-        return view('pages.dashboard', compact('totals', 'totalMasuk', 'totalIzin', 'totalSakit', 'totalTerlambat','totalTepatWaktu','totalKaryawans', 'currentMonthYearNow', 'totalWithoutKeteranganPerName'));
-
+        return view('pages.dashboard', compact('totalKaryawans', 'totalTidakMasukIzin', 'totalMasukTepatWaktu', 'totalMasukTelat', 'totals', 'currentMonthYearNow','currentMonthYearNow', 'totalWithoutKeteranganPerName'));
+        // return view('pages.dashboard', compact('totalKaryawans', 'totalTidakMasukIzin', 'totalMasukTepatWaktu', 'totalMasukTelat', 'totals', 'totalIzin', 'totalTepatWaktu', 'currentMonthYearNow', 'totalWithoutKeteranganPerName'));
     }
 
     //export Rekap jumlah akun serta keterangannya pada dashboard
@@ -200,7 +188,8 @@ class HomeController extends Controller
         return Excel::download(new KehadiranExport(), 'rekap_kehadiran.xlsx');
     }
 
-    public function notauthorize() {
+    public function notauthorize()
+    {
         return view('newlayout.authorization');
     }
 }
