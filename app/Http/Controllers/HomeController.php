@@ -37,8 +37,8 @@ class HomeController extends Controller
             $kategori = $documentData['kategori'] ?? null;
             $timestamps = $documentData['timestamps'] ?? null;
             $name = $documentData['name'] ?? null;
-
             $recordedMonthYear = date('Y-m', strtotime($timestamps));
+
             if ($kategori == "Datang") {
                 if ($recordedMonthYear == $currentMonthYear) {
                     if (!isset($totals[$name])) {
@@ -51,20 +51,18 @@ class HomeController extends Controller
                     }
                     // Hitung total keterangan "Masuk", "Izin", per field "name"
                     if ($keterangan == "Masuk") {
-                        if ($keterangan == "Masuk") {
-                            if ($status == "Tepat Waktu") {
-                                $totals[$name]['masuk']++;
-                                if (!isset($totalKeteranganPerName[$name])) {
-                                    $totalKeteranganPerName[$name] = 0;
-                                }
-                                $totalKeteranganPerName[$name]++;
-                            }elseif ($status == "Terlambat") {
-                                $totals[$name]['terlambat']++;
-                                if (!isset($totalKeteranganPerName[$name])) {
-                                    $totalKeteranganPerName[$name] = 0;
-                                }
-                                $totalKeteranganPerName[$name]++;
+                        if ($status == "Tepat Waktu") {
+                            $totals[$name]['masuk']++;
+                            if (!isset($totalKeteranganPerName[$name])) {
+                                $totalKeteranganPerName[$name] = 0;
                             }
+                            $totalKeteranganPerName[$name]++;
+                        } elseif ($status == "Terlambat") {
+                            $totals[$name]['terlambat']++;
+                            if (!isset($totalKeteranganPerName[$name])) {
+                                $totalKeteranganPerName[$name] = 0;
+                            }
+                            $totalKeteranganPerName[$name]++;
                         }
                     } elseif ($keterangan == "Izin") {
                         $totals[$name]['izin']++;
@@ -172,7 +170,7 @@ class HomeController extends Controller
                 }
             }
         }
-        return view('pages.dashboard', compact('totalKaryawans', 'totalTidakMasukIzin', 'totalMasukTepatWaktu', 'totalMasukTelat', 'totals', 'currentMonthYearNow','currentMonthYearNow', 'totalWithoutKeteranganPerName'));
+        return view('pages.dashboard', compact('totalKaryawans', 'totalTidakMasukIzin', 'totalMasukTepatWaktu', 'totalMasukTelat', 'totals', 'currentMonthYearNow', 'currentMonthYearNow', 'totalWithoutKeteranganPerName'));
         // return view('pages.dashboard', compact('totalKaryawans', 'totalTidakMasukIzin', 'totalMasukTepatWaktu', 'totalMasukTelat', 'totals', 'totalIzin', 'totalTepatWaktu', 'currentMonthYearNow', 'totalWithoutKeteranganPerName'));
     }
 
