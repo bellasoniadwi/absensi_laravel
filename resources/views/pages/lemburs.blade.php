@@ -62,7 +62,7 @@
                                                     {{ $chunk }}<br>
                                                 @endforeach
                                                 @if (count($alasanChunks) > 1)
-                                                    <a href="#" class="show-more" data-target=".full-text"> ..... </a>
+                                                    <a href="#" class="show-more" data-target=".full-text"> Lihat selengkapnya..</a>
                                                 @endif
                                             </div>
                                             <div class="full-text" style="display: none;">

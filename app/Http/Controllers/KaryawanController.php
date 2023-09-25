@@ -19,36 +19,13 @@ class KaryawanController extends Controller
 {
     public function index()
     {
-        $user = auth()->user();
-
-        if ($user) {
-            $id = $user->localId;
-
-            $firestore = app('firebase.firestore');
-            $database = $firestore->database();
-
-            $userDocRef = $database->collection('users')->document($id);
-            $userSnapshot = $userDocRef->snapshot();
-
-            if ($userSnapshot->exists()) {
-                $nama_akun = $userSnapshot->data()['name'];
-                $role_akun = $userSnapshot->data()['role'];
-            } else {
-                $nama_akun = "Name not found";
-                $role_akun = "Role not found";
-            }
-        } else {
-            $nama_akun = "Name ga kebaca";
-            $role_akun = "Role ga kebaca";
-        }
-
         $firestore = new FirestoreClient([
             'projectId' => 'absensi-sinarindo',
         ]);
 
         $collectionReference = $firestore->collection('karyawans');
         $data = [];
-        $query = $collectionReference->orderBy('name');
+        $query = $collectionReference->orderBy('timestamps', 'desc')->orderBy('name');
         $documents = $query->documents();
 
         foreach ($documents as $doc) {
