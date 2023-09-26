@@ -62,14 +62,14 @@
                                                     {{ $chunk }}<br>
                                                 @endforeach
                                                 @if (count($alasanChunks) > 1)
-                                                    <a href="#" class="show-more" data-target=".full-text"> Lihat selengkapnya..</a>
+                                                    <a href="#" class="show-more text-info" data-target=".full-text"> Lihat selengkapnya..</a>
                                                 @endif
                                             </div>
                                             <div class="full-text" style="display: none;">
                                                 @foreach (array_slice($alasanChunks, 1) as $chunk)
                                                     {{ $chunk }}<br>
                                                 @endforeach
-                                                  <a href="#" class="show-less" data-target=".full-text">Tutup</a>
+                                                  <a href="#" class="show-less text-info" data-target=".full-text">Tutup</a>
                                             </div>
                                         </td>
                                         <td class="align-middle text-center">
@@ -79,7 +79,7 @@
                                                 <button type="submit" class="btn btn-icons show_confirm_status">
                                                     @if ($lembur['status'] == false)
                                                         <span class="badge badge-sm bg-gradient-warning">
-                                                            Menunggu
+                                                            Belum Disetujui
                                                         </span>
                                                     @else
                                                         <span class="badge badge-sm bg-gradient-success">
